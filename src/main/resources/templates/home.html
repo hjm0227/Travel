@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 사이트</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .hero {
+            position: relative;
+            height: 600px;
+            background: url('/images/sky.jpg') no-repeat center center/cover;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .hero h1 {
+            font-size: 4rem;
+            margin: 0;
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+        .hero p {
+            font-size: 1.5rem;
+            color: #dcdcdc;
+            z-index: 2;
+            position: relative;
+        }
+        .login-signup {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .login-signup a {
+            font-size: 1rem;
+            color: white;
+            text-decoration: none;
+            margin: 5px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .login-signup a:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .duration-form {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .duration-form h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+        .duration-form select {
+            padding: 10px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .duration-form button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .duration-form button:hover {
+            background-color: #218838;
+        }
+        .mbti-form {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .mbti-form h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+        .mbti-form .mbti-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .mbti-form .mbti-row label {
+            font-size: 1rem;
+            color: #666;
+        }
+        .mbti-form select {
+            padding: 10px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .mbti-form button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .mbti-form button:hover {
+            background-color: #218838;
+        }
+        footer {
+            margin-top: 40px;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="login-signup">
+            <!-- 비로그인 상태 -->
+            <a th:if="${session.isLoggedIn == null}" href="/travel/login" aria-label="로그인">로그인</a>
+            <a th:if="${session.isLoggedIn == null}" href="/travel/save" aria-label="회원가입">회원가입</a>
+
+            <!-- 로그인 상태 확인 -->
+            <a th:if="${session.isLoggedIn}" href="/travel/logout" aria-label="로그아웃">로그아웃</a>
+            <a th:if="${session.isLoggedIn}" href="/community" aria-label="커뮤니티">커뮤니티</a>
+        </div>
+
+        <div>
+            <h1>제주도 여행</h1>
+            <p>여행 기간 선택</p>
+        </div>
+    </div>
+
+    <!-- MBTI Input Form -->
+    <div class="mbti-form">
+        <h2>설문 조사</h2>
+        <form id="mbti-form" action="/travel/submit-mbti" method="post">
+            <div class="mbti-row">
+                <div>
+                    <label for="e-i">첫 번째: E / I</label>
+                    <select id="e-i" name="eI">
+                        <option value="E">E</option>
+                        <option value="I">I</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="n-s">두 번째: N / S</label>
+                    <select id="n-s" name="nS">
+                        <option value="N">N</option>
+                        <option value="S">S</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="f-t">세 번째: F / T</label>
+                    <select id="f-t" name="fT">
+                        <option value="F">F</option>
+                        <option value="T">T</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="p-j">네 번째: P / J</label>
+                    <select id="p-j" name="pJ">
+                        <option value="P">P</option>
+                        <option value="J">J</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 여행 기간 선택 폼 -->
+    <div class="duration-form">
+        <h2>여행 기간을 선택하세요</h2>
+        <form id="duration-form" action="/travel/submit-duration" method="post">
+            <select id="duration" name="duration">
+                <option value="1일">1일</option>
+                <option value="2일">2일</option>
+                <option value="3일">3일</option>
+            </select>
+            <button type="submit">제출하기</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 여행 사이트</p>
+    </footer>
+</div>
+
+<script>
+
+    document.getElementById('duration-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 제출 동작을 막습니다.
+        // 폼 데이터를 서버에 제출합니다. (필요시 AJAX를 사용할 수 있습니다.)
+        window.location.href = 'http://localhost:8081/recommend'; // 리디렉션합니다.
+    });
+
+</script>
+
+</body>
+</html>
