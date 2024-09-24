@@ -20,11 +20,11 @@ public class PlayEntity {
     private Long id;
     private String name;
     private String type;
-    private Double price;
-    private String image_Url;
+    private Integer price;
+    private String imageUrl;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    // getter, setter, toString 추가
+
 }

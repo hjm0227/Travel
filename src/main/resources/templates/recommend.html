@@ -18,7 +18,26 @@
             padding: 20px;
             background-color: #ffffff; /* 흰색 배경 */
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 */
+            display: flex; /* 왼쪽 일정 리스트와 오른쪽 카테고리 리스트를 가로로 배치 */
+        }
+
+        .days, .categories {
+            flex: 1; /* 두 영역을 동일한 비율로 차지하게 함 */
+            margin: 10px;
+        }
+
+        .days .day {
+            padding: 10px;
+            margin-bottom: 40px;
+            background-color: #e0e0e0; /* 회색 배경 */
+            border-radius: 4px;
+            min-height: 100px; /* 최소 높이 설정 */
+        }
+
+        .day h3 {
+            margin-top: 0;
+            pointer-events: none; /* 제목은 선택되지 않도록 설정 */
         }
 
         .category {
@@ -33,10 +52,10 @@
 
         .scrollable {
             max-height: 400px; /* 최대 높이 설정 */
-            overflow-y: auto; /* 스크롤 가능 */
+            overflow-y: auto; /* 세로 스크롤 허용 */
             padding: 10px;
             background-color: #f9f9f9; /* 배경색 추가 */
-            border: 1px solid #ddd;
+            border: 1px solid #ddd; /* 테두리 */
             border-radius: 4px;
         }
 
@@ -46,6 +65,11 @@
             background-color: #ffffff; /* 아이템 배경색 */
             border: 1px solid #ddd;
             border-radius: 4px;
+            cursor: grab; /* 드래그 가능함을 나타내는 커서 */
+            display: flex;
+            align-items: center;
+            gap: 15px; /* 이미지와 텍스트 사이의 간격 */
+            position: relative; /* 자식 요소의 절대 위치를 설정하기 위한 상대 위치 */
         }
 
         .item h3 {
@@ -57,56 +81,227 @@
             margin: 5px 0;
         }
 
-        .item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
+        /* 홈 버튼 스타일 추가 */
+        .home-button {
+            display: block;
+            width: 50px; /* 이미지 크기 설정 */
+            margin: 20px auto; /* 중앙 정렬 */
+            position: absolute; /* 상단 고정 */
+            top: 20px;
+            left: 20px;
         }
+
+        .home-button img {
+            width: 100%;
+            height: auto;
+            border: none;
+            cursor: pointer;
+        }
+        .item {
+            position: relative; /* 자식 요소의 절대 위치 설정을 위한 relative */
+        }
+
+        .cancel-button {
+            position: absolute; /* 부모 요소를 기준으로 절대 위치 설정 */
+            bottom: 10px; /* 아래에서 10px */
+            right: 10px; /* 오른쪽에서 10px */
+            padding: 5px 10px; /* 버튼 패딩 */
+            background-color: #f44336; /* 버튼 배경색 */
+            color: #ffffff; /* 버튼 텍스트 색상 */
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 4px; /* 모서리 둥글게 */
+            cursor: pointer; /* 커서 모양 변경 */
+            display: none;
+        }
+
+        .cancel-button:hover {
+            background-color: #d32f2f; /* 호버 시 버튼 색상 변경 */
+        }
+
+        .extra-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px; /* 이미지 크기 */
+            height: 40px;
+            object-fit: cover; /* 이미지를 영역에 맞게 조정 */
+            border-radius: 50%; /* 이미지를 둥글게 */
+        }
+
     </style>
 </head>
 <body>
+
+<!-- 홈 버튼을 상단에 배치 -->
+<a href="travel/home" class="home-button">
+    <img src="/images/home.png" alt="홈으로 돌아가기" />
+</a>
+
 <div class="container">
-    <div class="category">
-        <h2>놀거리</h2>
-        <div class="scrollable">
-            <div th:each="play : ${plays}">
-                <div class="item">
-                    <h3 th:text="${play.name}">놀거리 이름</h3>
-                    <p th:text="${play.type}">놀거리 타입</p>
-                    <p th:text="${play.price}">놀거리 가격</p>
-
-                </div>
-            </div>
+    <!-- 왼쪽: 일정 리스트 (1일차, 2일차, 3일차 고정) -->
+    <div class="days">
+        <div class="day" id="day1">
+            <h3>1일차</h3>
+            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
+        </div>
+        <div class="day" id="day2">
+            <h3>2일차</h3>
+            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
+        </div>
+        <div class="day" id="day3">
+            <h3>3일차</h3>
+            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
         </div>
     </div>
 
-    <div class="category">
-        <h2>식당</h2>
-        <div class="scrollable">
-            <div th:each="restaurant : ${restaurants}">
-                <div class="item">
-                    <h3 th:text="${restaurant.name}">식당 이름</h3>
-                    <p th:text="${restaurant.type}">식당 타입</p>
-                    <p th:text="${restaurant.price}">식당 가격</p>
+    <!-- 오른쪽: 카테고리 리스트 (놀거리, 식당, 숙소) -->
+    <div class="categories">
+        <!-- 놀거리 카테고리 -->
+        <div class="category">
+            <h3>놀거리</h3>
+            <div class="scrollable" id="play-list">
+                <div th:each="play : ${plays}" class="item" th:data-id="${play.id}">
+                    <!-- 분류 이미지 -->
+                    <img src="/images/play.png" alt="놀거리 아이콘" class="extra-icon">
+                    <!-- 이미지 추가 -->
+                    <img th:src="${play.imageUrl}" alt="놀거리 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
 
+                    <!-- 타입, 가격 정보 -->
+                    <div>
+                        <h3 th:text="${play.name}"></h3>
+                        <p>타입: <span th:text="${play.type}"></span></p>
+                        <p>가격: <span th:text="${play.price} + '원'"></span></p>
+
+                    </div>
+                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="category">
-        <h2>숙소</h2>
-        <div class="scrollable">
-            <div th:each="hotel : ${hotels}">
-                <div class="item">
-                    <h3 th:text="${hotel.name}">숙소 이름</h3>
-                    <p th:text="${hotel.type}">숙소 타입</p>
-                    <p th:text="${hotel.price}">숙소 가격</p>
+        <!-- 식당 카테고리 -->
+        <div class="category">
+            <h3>식당</h3>
+            <div class="scrollable" id="restaurant-list">
+                <div th:each="restaurant : ${restaurants}" class="item" th:data-id="${restaurant.id}">
+                    <!-- 분류 이미지 -->
+                    <img src="/images/restaurant.png" alt="식당 아이콘" class="extra-icon">
+                    <!-- 이미지 추가 -->
+                    <img th:src="${restaurant.imageUrl}" alt="식당 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
 
+                    <!-- 타입, 가격 정보 -->
+                    <div>
+                        <h3 th:text="${restaurant.name}"></h3>
+                        <p>타입: <span th:text="${restaurant.type}"></span></p>
+                        <p>가격: <span th:text="${restaurant.price} + '원'"></span></p>
+                    </div>
+                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 숙소 카테고리 -->
+        <div class="category">
+            <h3>숙소</h3>
+            <div class="scrollable" id="hotel-list">
+                <div th:each="hotel : ${hotels}" class="item" th:data-id="${hotel.id}">
+                    <!-- 분류 이미지 -->
+                    <img src="/images/hotel.png" alt="숙소 아이콘" class="extra-icon">
+                    <!-- 이미지 추가 -->
+                    <img th:src="${hotel.imageUrl}" alt="숙소 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+
+                    <!-- 타입, 가격 정보 -->
+                    <div>
+                        <h3 th:text="${hotel.name}"></h3>
+                        <p>타입: <span th:text="${hotel.type}"></span></p>
+                        <p>가격: <span th:text="${hotel.price} + '원'"></span></p>
+                    </div>
+                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Sortable.js 라이브러리를 사용하여 드래그 앤 드롭 기능 추가 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    // URL에서 기간 정보 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const duration = urlParams.get('duration');
+
+    // 모든 일차를 숨김
+    document.querySelectorAll('.day').forEach(day => {
+        day.style.display = 'none';
+    });
+
+    // 선택된 기간에 따라 일차 표시
+    if (duration === '1day') {
+        document.getElementById('day1').style.display = 'block';
+    } else if (duration === '2day') {
+        document.getElementById('day1').style.display = 'block';
+        document.getElementById('day2').style.display = 'block';
+    } else if (duration === '3day') {
+        document.getElementById('day1').style.display = 'block';
+        document.getElementById('day2').style.display = 'block';
+        document.getElementById('day3').style.display = 'block';
+    }
+
+    function cancelMove(button) {
+        const item = button.parentElement; // 버튼의 부모 요소 (아이템)
+        const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID를 데이터 속성에서 가져옴
+
+        // 원래 카테고리 리스트에 항목 추가
+        document.getElementById(originalListId).appendChild(item);
+
+        // 드래그 앤 드롭 기능에서 제거
+        const sortable = Sortable.get(item.parentElement);
+        sortable.remove(item);
+    }
+
+    // 드래그 앤 드롭 기능 적용
+    new Sortable(document.querySelector('#day1 .sortable-list'), { group: 'shared', animation: 150 });
+    new Sortable(document.querySelector('#day2 .sortable-list'), { group: 'shared', animation: 150 });
+    new Sortable(document.querySelector('#day3 .sortable-list'), { group: 'shared', animation: 150 });
+
+    // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정
+    new Sortable(document.getElementById('play-list'), { group: 'shared', animation: 150 });
+    new Sortable(document.getElementById('restaurant-list'), { group: 'shared', animation: 150 });
+    new Sortable(document.getElementById('hotel-list'), { group: 'shared', animation: 150 });
+
+    // 카테고리 항목에 원래 리스트 ID 저장
+    document.querySelectorAll('.item').forEach(item => {
+        const category = item.closest('.category').querySelector('h3').innerText; // 카테고리 제목
+        item.setAttribute('data-original-list',
+            category === '놀거리' ? 'play-list' :
+                category === '식당' ? 'restaurant-list' :
+                    'hotel-list'); // 원래 리스트 ID 설정
+    });
+
+    document.querySelectorAll('.sortable-list').forEach(list => {
+        new Sortable(list, {
+            group: 'shared',
+            animation: 150,
+            onAdd: function (evt) {
+                // 아이템에 해당하는 취소 버튼을 보여줌
+                const item = evt.item;
+                const cancelButton = item.querySelector('.cancel-button');
+                if (cancelButton) {
+                    cancelButton.style.display = 'inline-block';
+                }
+            }
+        });
+    });
+
+    // 취소 버튼 클릭 시 처리
+    function cancelMove(button) {
+        const item = button.closest('.item');
+        const originalList = document.getElementById(item.dataset.originalList); // 원래 리스트 ID
+        originalList.appendChild(item); // 원래 리스트로 다시 이동
+        button.style.display = 'none'; // 취소 버튼 숨김
+    }
+
+
+
+</script>
 </body>
 </html>

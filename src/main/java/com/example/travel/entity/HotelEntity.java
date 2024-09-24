@@ -20,7 +20,7 @@ public class HotelEntity {
     private Long id;
     private String name;
     private String type;
-    private Double price;
+    private Integer price;
     private String imageUrl;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

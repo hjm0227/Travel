@@ -18,4 +18,18 @@ public class PlayService {
     public List<PlayEntity> getAllPlays() {
         return playRepository.findAll();
     }
+
+    public void createP(String name, Integer price, String type){
+        PlayEntity play = new PlayEntity();
+
+        play.setName(name);
+        play.setPrice(price);
+        play.setType(type);
+
+        playRepository.save(play);
+    }
+
+    public void delete(Long id) {
+        playRepository.deleteById(id);
+    }
 }

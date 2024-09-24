@@ -189,7 +189,7 @@
 
         <div>
             <h1>제주도 여행</h1>
-            <p>여행 기간 선택</p>
+            <p>MBTI에 따른 여행 추천</p>
         </div>
     </div>
 
@@ -235,9 +235,9 @@
         <h2>여행 기간을 선택하세요</h2>
         <form id="duration-form" action="/travel/submit-duration" method="post">
             <select id="duration" name="duration">
-                <option value="1일">1일</option>
-                <option value="2일">2일</option>
-                <option value="3일">3일</option>
+                <option value="1day">1일</option>
+                <option value="2day">2일</option>
+                <option value="3day">3일</option>
             </select>
             <button type="submit">제출하기</button>
         </form>
@@ -250,14 +250,25 @@
 </div>
 
 <script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const loginSuccess = urlParams.get('loginSuccess');
+        const currentUrl = window.location.href;
+
+        // 현재 페이지가 로그인 페이지가 아닐 때만 알림을 표시합니다.
+        if (!currentUrl.includes('/travel/login')) {
+            if (loginSuccess) {
+                alert('로그인 성공!');
+            }
+        }
+    };
 
     document.getElementById('duration-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // 기본 제출 동작을 막습니다.
-        // 폼 데이터를 서버에 제출합니다. (필요시 AJAX를 사용할 수 있습니다.)
-        window.location.href = 'http://localhost:8081/recommend'; // 리디렉션합니다.
+        event.preventDefault();
+        const duration = document.getElementById('duration').value;
+        window.location.href = `/recommend?duration=${duration}`; // URL에 선택한 기간 추가
     });
 
 </script>
-
 </body>
 </html>

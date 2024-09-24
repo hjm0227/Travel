@@ -9,6 +9,8 @@ import com.example.travel.entity.RestaurantEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -40,5 +42,55 @@ public class ReadController {
 
 
         return "recommend";  // recommend.html로 이동
+    }
+
+    @GetMapping("/createH")
+    public String createHForm(){
+        return "createH";
+    }
+    @PostMapping("/createH")
+    public String createH(String name, Integer price, String type){
+        hotelService.createH(name, price, type);
+
+        return "redirect:/recommend";
+    }
+
+    @GetMapping("/createR")
+    public String createRForm(){
+        return "createR";
+    }
+    @PostMapping("/createR")
+    public String createR(String name, Integer price, String type){
+        restaurantService.createR(name, price, type);
+
+        return "redirect:/recommend";
+    }
+
+    @GetMapping("/createP")
+    public String createPForm(){
+        return "createP";
+    }
+    @PostMapping("/createP")
+    public String createP(String name, Integer price, String type){
+        playService.createP(name, price, type);
+
+        return "redirect:/recommend";
+    }
+
+    @PostMapping("/deleteHotel")
+    public String deleteHotel(@RequestParam Long id) {
+        hotelService.delete(id);
+        return "redirect:/recommend";
+    }
+    @PostMapping("/deletePlay")
+    public String deletePlay(@RequestParam Long id) {
+        playService.delete(id);
+        return "redirect:/recommend";
+    }
+
+    @PostMapping("/deleteRestaurant")
+    public String deleteRestaurant(@RequestParam Long id) {
+        restaurantService.delete(id);
+        return "redirect:/recommend";
     }
 }
