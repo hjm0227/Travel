@@ -23,7 +23,4 @@ public class RestaurantEntity {
     private Integer price;
     private String imageUrl;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
-
 }

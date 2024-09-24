@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "play_table")
 @Setter
@@ -22,9 +19,6 @@ public class PlayEntity {
     private String type;
     private Integer price;
     private String imageUrl;
-
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
 
 
 }

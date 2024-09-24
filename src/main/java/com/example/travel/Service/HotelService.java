@@ -22,17 +22,4 @@ public class HotelService {
     public List<HotelEntity> getAllHotels() {
         return hotelRepository.findAll();
     }
-
-    public void createH(String name, Integer price, String type){
-        HotelEntity hotel = new HotelEntity();
-
-        hotel.setName(name);
-        hotel.setPrice(price);
-        hotel.setType(type);
-
-        hotelRepository.save(hotel);
-    }
-    public void delete(Long id) {
-        hotelRepository.deleteById(id);
-    }
 }

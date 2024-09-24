@@ -18,17 +18,4 @@ public class RestaurantService {
     public List<RestaurantEntity> getAllRestaurants() {
         return restaurantRepository.findAll();
     }
-
-    public void createR(String name, Integer price, String type){
-        RestaurantEntity restaurant = new RestaurantEntity();
-
-        restaurant.setName(name);
-        restaurant.setPrice(price);
-        restaurant.setType(type);
-
-        restaurantRepository.save(restaurant);
-    }
-    public void delete(Long id) {
-        restaurantRepository.deleteById(id);
-    }
 }
