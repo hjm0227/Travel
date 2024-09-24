@@ -19,5 +19,6 @@ public class HotelEntity {
     private String type;
     private Integer price;
     private String imageUrl;
+    private String place;
 
 }

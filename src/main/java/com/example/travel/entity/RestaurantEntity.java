@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "restaurant_table")
@@ -22,5 +21,6 @@ public class RestaurantEntity {
     private String type;
     private Integer price;
     private String imageUrl;
+    private String place;
 
 }

@@ -19,6 +19,7 @@ public class PlayEntity {
     private String type;
     private Integer price;
     private String imageUrl;
+    private String place;
 
 
 }
