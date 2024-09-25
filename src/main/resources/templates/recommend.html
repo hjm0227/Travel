@@ -138,6 +138,15 @@
             border-radius: 50%; /* 이미지를 둥글게 */
             margin-right: 50px; /* 오른쪽 여백 추가 */
         }
+
+        .total-sum {
+            margin-top: 20px; /* 위쪽 여백 추가 */
+            padding: 10px;
+            background-color: #e0e0e0; /* 회색 배경 */
+            border-radius: 4px; /* 둥글게 */
+            text-align: center; /* 중앙 정렬 */
+        }
+
     </style>
 </head>
 <body>
@@ -153,14 +162,20 @@
         <div class="day" id="day1">
             <h3>1일차</h3>
             <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
+            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
         </div>
         <div class="day" id="day2">
             <h3>2일차</h3>
             <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
+            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
         </div>
         <div class="day" id="day3">
             <h3>3일차</h3>
             <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
+            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
+        </div>
+        <div class="total-sum">
+            <h2>총합 금액: <span id="overall-total">0원</span></h2>
         </div>
     </div>
 
@@ -175,7 +190,6 @@
                     <img src="/images/play.png" alt="놀거리 아이콘" class="extra-icon">
                     <!-- 이미지 추가 -->
                     <img th:src="${play.imageUrl}" alt="놀거리 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-
                     <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${play.name}"></h3>
@@ -200,7 +214,6 @@
                     <img src="/images/restaurant.png" alt="식당 아이콘" class="extra-icon">
                     <!-- 이미지 추가 -->
                     <img th:src="${restaurant.imageUrl}" alt="식당 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-
                     <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${restaurant.name}"></h3>
@@ -224,7 +237,6 @@
                     <img src="/images/hotel.png" alt="숙소 아이콘" class="extra-icon">
                     <!-- 이미지 추가 -->
                     <img th:src="${hotel.imageUrl}" alt="숙소 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-
                     <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${hotel.name}"></h3>
@@ -268,9 +280,13 @@
     function cancelMove(button) {
         const item = button.parentElement; // 버튼의 부모 요소 (아이템)
         const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID를 데이터 속성에서 가져옴
+        const dayId = item.closest('.day').id; // 아이템이 있는 day의 ID
 
         // 원래 카테고리 리스트에 항목 추가
         document.getElementById(originalListId).appendChild(item);
+
+        // 총합에서 가격을 빼기
+        updateTotalPrice(dayId);
 
         // 드래그 앤 드롭 기능에서 제거
         const sortable = Sortable.get(item.parentElement);
@@ -296,35 +312,100 @@
                     'hotel-list'); // 원래 리스트 ID 설정
     });
 
-    document.querySelectorAll('.sortable-list').forEach(list => {
-        new Sortable(list, {
-            group: 'shared',
-            animation: 150,
-            onAdd: function (evt) {
-                // 아이템에 해당하는 취소 버튼을 보여줌
-                const item = evt.item;
-                const cancelButton = item.querySelector('.cancel-button');
-                if (cancelButton) {
-                    cancelButton.style.display = 'inline-block';
-                }
-            }
-        });
-    });
-
-    // 취소 버튼 클릭 시 처리
-    function cancelMove(button) {
-        const item = button.closest('.item');
-        const originalList = document.getElementById(item.dataset.originalList); // 원래 리스트 ID
-        originalList.appendChild(item); // 원래 리스트로 다시 이동
-        button.style.display = 'none'; // 취소 버튼 숨김
-    }
-
     function openLink(image) {
         const item = image.closest('.item'); // 클릭된 이미지의 부모 요소 (아이템)
         const placeUrl = item.getAttribute('data-place'); // data-place에서 링크 가져오기
         if (placeUrl) {
             window.open(placeUrl, '_blank'); // 새 탭에서 링크 열기
         }
+    }
+
+
+
+    function updateTotalPrice(dayId) {
+        const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
+        let total = 0;
+
+        items.forEach(item => {
+            const priceText = item.querySelector('p:last-child span').innerText; // 가격 정보 가져오기
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
+            total += price; // 총합 계산
+        });
+
+        // 총합 업데이트
+        const totalPriceElement = document.querySelector(`#${dayId} .total-price`);
+        totalPriceElement.innerText = `${total}원`;
+    }
+
+    // 드래그 앤 드롭 기능 적용
+    const day1Sortable = new Sortable(document.querySelector('#day1 .sortable-list'), {
+        group: 'shared',
+        animation: 150,
+        onAdd: function (evt) {
+            updateTotalPrice('day1'); // 총합 업데이트 호출
+            const item = evt.item; // 추가된 아이템
+            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
+            if (cancelButton) {
+                cancelButton.style.display = 'block'; // 취소 버튼 표시
+            }
+        }
+    });
+    const day2Sortable = new Sortable(document.querySelector('#day2 .sortable-list'), {
+        group: 'shared',
+        animation: 150,
+        onAdd: function (evt) {
+            updateTotalPrice('day2'); // 총합 업데이트 호출
+            const item = evt.item; // 추가된 아이템
+            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
+            if (cancelButton) {
+                cancelButton.style.display = 'block'; // 취소 버튼 표시
+            }
+        }
+    });
+    const day3Sortable = new Sortable(document.querySelector('#day3 .sortable-list'), {
+        group: 'shared',
+        animation: 150,
+        onAdd: function (evt) {
+            updateTotalPrice('day3'); // 총합 업데이트 호출
+            const item = evt.item; // 추가된 아이템
+            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
+            if (cancelButton) {
+                cancelButton.style.display = 'block'; // 취소 버튼 표시
+            }
+        }
+    });
+
+    function updateOverallTotal() {
+        let overallTotal = 0;
+
+        // 각 일차의 총합 계산
+        document.querySelectorAll('.total-price').forEach(total => {
+            const priceText = total.innerText; // 가격 정보 가져오기
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
+            overallTotal += price; // 전체 총합 계산
+        });
+
+        // 전체 총합 업데이트
+        document.getElementById('overall-total').innerText = `${overallTotal}원`;
+    }
+
+    // 기존의 updateTotalPrice 함수에서 전체 총합 업데이트 추가
+    function updateTotalPrice(dayId) {
+        const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
+        let total = 0;
+
+        items.forEach(item => {
+            const priceText = item.querySelector('p:last-child span').innerText; // 가격 정보 가져오기
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
+            total += price; // 총합 계산
+        });
+
+        // 총합 업데이트
+        const totalPriceElement = document.querySelector(`#${dayId} .total-price`);
+        totalPriceElement.innerText = `${total}원`;
+
+        // 전체 총합 업데이트 호출
+        updateOverallTotal();
     }
 
 
