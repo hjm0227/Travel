@@ -291,6 +291,9 @@
         // 드래그 앤 드롭 기능에서 제거
         const sortable = Sortable.get(item.parentElement);
         sortable.remove(item);
+
+        // 취소 버튼 숨김
+        button.style.display = 'none';
     }
 
     // 드래그 앤 드롭 기능 적용
@@ -298,10 +301,29 @@
     new Sortable(document.querySelector('#day2 .sortable-list'), { group: 'shared', animation: 150 });
     new Sortable(document.querySelector('#day3 .sortable-list'), { group: 'shared', animation: 150 });
 
-    // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정
-    new Sortable(document.getElementById('play-list'), { group: 'shared', animation: 150 });
-    new Sortable(document.getElementById('restaurant-list'), { group: 'shared', animation: 150 });
-    new Sortable(document.getElementById('hotel-list'), { group: 'shared', animation: 150 });
+    // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정 (드롭 비활성화)
+    new Sortable(document.getElementById('play-list'), {
+        group: 'shared',
+        animation: 150,
+        // 드롭을 방지하기 위해 onAdd 이벤트를 비워둡니다
+        onAdd: function (evt) {
+            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+        }
+    });
+    new Sortable(document.getElementById('restaurant-list'), {
+        group: 'shared',
+        animation: 150,
+        onAdd: function (evt) {
+            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+        }
+    });
+    new Sortable(document.getElementById('hotel-list'), {
+        group: 'shared',
+        animation: 150,
+        onAdd: function (evt) {
+            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+        }
+    });
 
     // 카테고리 항목에 원래 리스트 ID 저장
     document.querySelectorAll('.item').forEach(item => {
@@ -311,16 +333,6 @@
                 category === '식당' ? 'restaurant-list' :
                     'hotel-list'); // 원래 리스트 ID 설정
     });
-
-    function openLink(image) {
-        const item = image.closest('.item'); // 클릭된 이미지의 부모 요소 (아이템)
-        const placeUrl = item.getAttribute('data-place'); // data-place에서 링크 가져오기
-        if (placeUrl) {
-            window.open(placeUrl, '_blank'); // 새 탭에서 링크 열기
-        }
-    }
-
-
 
     function updateTotalPrice(dayId) {
         const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
@@ -375,41 +387,21 @@
         }
     });
 
+    // 추가적으로 전체 총합 업데이트 기능 추가
     function updateOverallTotal() {
         let overallTotal = 0;
 
         // 각 일차의 총합 계산
         document.querySelectorAll('.total-price').forEach(total => {
             const priceText = total.innerText; // 가격 정보 가져오기
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 숫자만 추출
             overallTotal += price; // 전체 총합 계산
         });
 
         // 전체 총합 업데이트
         document.getElementById('overall-total').innerText = `${overallTotal}원`;
     }
-
-    // 기존의 updateTotalPrice 함수에서 전체 총합 업데이트 추가
-    function updateTotalPrice(dayId) {
-        const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
-        let total = 0;
-
-        items.forEach(item => {
-            const priceText = item.querySelector('p:last-child span').innerText; // 가격 정보 가져오기
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
-            total += price; // 총합 계산
-        });
-
-        // 총합 업데이트
-        const totalPriceElement = document.querySelector(`#${dayId} .total-price`);
-        totalPriceElement.innerText = `${total}원`;
-
-        // 전체 총합 업데이트 호출
-        updateOverallTotal();
-    }
-
-
-
 </script>
+
 </body>
 </html>
