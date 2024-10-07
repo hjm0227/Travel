@@ -155,7 +155,6 @@
 <a href="travel/home" class="home-button">
     <img src="/images/home.png" alt="홈으로 돌아가기" />
 </a>
-
 <div class="container">
     <!-- 왼쪽: 일정 리스트 (1일차, 2일차, 3일차 고정) -->
     <div class="days">
@@ -193,8 +192,13 @@
                     <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${play.name}"></h3>
-                        <p>타입: <span th:text="${play.type}"></span></p>
-                        <p>가격: <span th:text="${play.price} + '원'"></span></p>
+                        <div th:if="${play != null}">
+
+                            <p>타입:
+                                <span th:each="type : ${play.types}" th:text="${type.typeName}"></span>
+                            </p>
+
+                            <p>가격: <span th:text="${play.price} + '원'"></span></p>
                     </div>
                     <!-- map 이미지 넣고 클릭시 컬럼place안에 링크로 이동 -->
                     <a th:href="${play.place}" target="_blank">
@@ -241,6 +245,8 @@
                     <div>
                         <h3 th:text="${hotel.name}"></h3>
                         <p>타입: <span th:text="${hotel.type}"></span></p>
+
+
                         <p>가격: <span th:text="${hotel.price} + '원'"></span></p>
                     </div>
                     <a th:href="${hotel.place}" target="_blank">
@@ -278,19 +284,18 @@
     }
 
     function cancelMove(button) {
-        const item = button.parentElement; // 버튼의 부모 요소 (아이템)
+        const item = button.closest('.item'); // .item 클래스를 가진 상위 요소를 찾음
+        // 버튼의 부모 요소 (아이템)
         const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID를 데이터 속성에서 가져옴
         const dayId = item.closest('.day').id; // 아이템이 있는 day의 ID
 
+
         // 원래 카테고리 리스트에 항목 추가
-        document.getElementById(originalListId).appendChild(item);
+        const originalList = document.getElementById(originalListId);
+        originalList.appendChild(item); // 원래 리스트로 아이템 복귀
 
         // 총합에서 가격을 빼기
         updateTotalPrice(dayId);
-
-        // 드래그 앤 드롭 기능에서 제거
-        const sortable = Sortable.get(item.parentElement);
-        sortable.remove(item);
 
         // 취소 버튼 숨김
         button.style.display = 'none';
@@ -402,6 +407,5 @@
         document.getElementById('overall-total').innerText = `${overallTotal}원`;
     }
 </script>
-
 </body>
 </html>
