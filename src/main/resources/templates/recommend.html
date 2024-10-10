@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,19 +13,33 @@
         }
 
         .container {
-            width: 80%;
+            width: 85%;
             margin: 0 auto;
             padding: 20px;
             background-color: #ffffff; /* 흰색 배경 */
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 */
             display: flex; /* 왼쪽 일정 리스트와 오른쪽 카테고리 리스트를 가로로 배치 */
+            height: 100vh; /* 전체 화면 높이 */
         }
 
-        .days, .categories {
+        .days {
             flex: 1; /* 두 영역을 동일한 비율로 차지하게 함 */
             margin: 10px;
+            background-color: #f9f9f9; /* 배경색 */
+            padding: 10px; /* 내부 여백 */
+            overflow-y: auto; /* 세로 스크롤 허용 */
         }
+
+        .right-column {
+            flex: 1; /* 두 영역을 동일한 비율로 차지하게 함 */
+            margin: 10px;
+            background-color: #f9f9f9; /* 배경색 */
+            padding: 10px; /* 내부 여백 */
+            overflow-y: auto; /* 세로 스크롤 허용 */
+        }
+
+
 
         .days .day {
             padding: 10px;
@@ -40,10 +54,6 @@
             pointer-events: none; /* 제목은 선택되지 않도록 설정 */
         }
 
-        .category {
-            margin-bottom: 20px;
-        }
-
         .category h2 {
             background-color: #e0e0e0; /* 회색 배경 */
             padding: 10px;
@@ -51,7 +61,7 @@
         }
 
         .scrollable {
-            max-height: 400px; /* 최대 높이 설정 */
+            max-height: 800px; /* 최대 높이 설정 */
             overflow-y: auto; /* 세로 스크롤 허용 */
             padding: 10px;
             background-color: #f9f9f9; /* 배경색 추가 */
@@ -112,6 +122,10 @@
             border-radius: 4px; /* 모서리 둥글게 */
             cursor: pointer; /* 커서 모양 변경 */
             display: none;
+
+        }
+        .item.dragged .cancel-button {
+            display: block; /* 드래그된 아이템에만 표시 */
         }
 
         .cancel-button:hover {
@@ -147,7 +161,67 @@
             text-align: center; /* 중앙 정렬 */
         }
 
+        .tab {
+            display: inline-block;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #e0e0e0; /* 기본 배경색 */
+        }
+
+        .tab.active {
+            background-color: #ccc; /* 활성화된 탭의 배경색 */
+            font-weight: bold; /* 활성화된 탭의 텍스트 굵게 */
+        }
+
+        .tab-content {
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        .tab-content.active {
+            display: block; /* 활성화된 탭 콘텐츠는 보여줌 */
+        }
+
+        .item.dragged .cancel-button {
+            display: block; /* 드래그된 아이템에만 표시 */
+        }
+
+
     </style>
+    <script>
+        document.querySelectorAll('.item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                this.classList.add('dragged'); // 드래그 시작 시 'dragged' 클래스 추가
+            });
+
+            item.addEventListener('dragend', function() {
+                this.classList.remove('dragged'); // 드래그 끝날 시 'dragged' 클래스 제거
+            });
+        });
+
+        function showTab(event, tabName) {
+            var i, tabContent, tablinks;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active"); // 모든 탭 콘텐츠 숨기기
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active"); // 모든 탭에서 active 클래스 제거
+            }
+            document.getElementById(tabName).classList.add("active"); // 선택한 탭 콘텐츠 보여주기
+            event.currentTarget.classList.add("active"); // 클릭한 탭에 active 클래스 추가
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 초기 상태: 첫 번째 탭을 보이도록 설정
+            const firstTab = document.querySelector('.tab');
+            const firstTabContent = document.querySelector('.tab-content');
+            if (firstTab && firstTabContent) {
+                firstTab.classList.add("active"); // 첫 번째 탭에 active 클래스 추가
+                firstTabContent.classList.add("active"); // 첫 번째 탭 콘텐츠에 active 클래스 추가
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -179,9 +253,14 @@
     </div>
 
     <!-- 오른쪽: 카테고리 리스트 (놀거리, 식당, 숙소) -->
-    <div class="categories">
-        <!-- 놀거리 카테고리 -->
-        <div class="category">
+    <div class="right-column">
+        <div>
+            <div class="tab" onclick="showTab(event, 'activities')">놀거리</div>
+            <div class="tab" onclick="showTab(event, 'restaurants')">식당</div>
+            <div class="tab" onclick="showTab(event, 'accommodations')">숙소</div>
+        </div>
+
+        <div id="activities" class="tab-content active">
             <h3>놀거리</h3>
             <div class="scrollable" id="play-list">
                 <div th:each="play : ${plays}" class="item" th:data-id="${play.id}">
@@ -193,24 +272,27 @@
                     <div>
                         <h3 th:text="${play.name}"></h3>
                         <div th:if="${play != null}">
-
-                            <p>타입:
-                                <span th:each="type : ${play.types}" th:text="${type.typeName}"></span>
+                            <p><!--타입:-->
+                                <span th:each="type, iterStat : ${play.types}">
+                                    <span th:text="'#' + ${type.typeName} + (iterStat.last ? '' : '  ')"></span>
+                                </span>
                             </p>
-
-                            <p>가격: <span th:text="${play.price} + '원'"></span></p>
+                            <p>가격:
+                                <span th:text="${play.price} + '원'"></span>
+                            </p>
+                        </div>
                     </div>
-                    <!-- map 이미지 넣고 클릭시 컬럼place안에 링크로 이동 -->
+                    <!-- map 이미지 넣고 클릭 시 컬럼 place 안에 링크로 이동 -->
                     <a th:href="${play.place}" target="_blank">
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
-                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
+                    <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
                 </div>
             </div>
         </div>
 
         <!-- 식당 카테고리 -->
-        <div class="category">
+        <div id="restaurants" class="tab-content">
             <h3>식당</h3>
             <div class="scrollable" id="restaurant-list">
                 <div th:each="restaurant : ${restaurants}" class="item" th:data-id="${restaurant.id}">
@@ -227,13 +309,13 @@
                     <a th:href="${restaurant.place}" target="_blank">
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
-                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
+                    <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
                 </div>
             </div>
         </div>
 
         <!-- 숙소 카테고리 -->
-        <div class="category">
+        <div id="accommodations" class="tab-content">
             <h3>숙소</h3>
             <div class="scrollable" id="hotel-list">
                 <div th:each="hotel : ${hotels}" class="item" th:data-id="${hotel.id}">
@@ -245,14 +327,12 @@
                     <div>
                         <h3 th:text="${hotel.name}"></h3>
                         <p>타입: <span th:text="${hotel.type}"></span></p>
-
-
                         <p>가격: <span th:text="${hotel.price} + '원'"></span></p>
                     </div>
                     <a th:href="${hotel.place}" target="_blank">
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
-                    <button class="cancel-button" onclick="cancelMove(this)">취소</button>
+                    <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
                 </div>
             </div>
         </div>
@@ -288,7 +368,6 @@
         // 버튼의 부모 요소 (아이템)
         const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID를 데이터 속성에서 가져옴
         const dayId = item.closest('.day').id; // 아이템이 있는 day의 ID
-
 
         // 원래 카테고리 리스트에 항목 추가
         const originalList = document.getElementById(originalListId);
@@ -339,19 +418,22 @@
                     'hotel-list'); // 원래 리스트 ID 설정
     });
 
+    // 각 일차의 총합 가격 업데이트 함수
     function updateTotalPrice(dayId) {
+        let totalPrice = 0;
         const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
-        let total = 0;
 
         items.forEach(item => {
-            const priceText = item.querySelector('p:last-child span').innerText; // 가격 정보 가져오기
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 가격에서 숫자만 추출
-            total += price; // 총합 계산
+            const priceText = item.querySelector('p:nth-child(2) span').innerText; // 가격 텍스트 가져오기
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 숫자만 추출
+            totalPrice += isNaN(price) ? 0 : price; // 숫자가 아니면 0으로 처리
         });
 
-        // 총합 업데이트
-        const totalPriceElement = document.querySelector(`#${dayId} .total-price`);
-        totalPriceElement.innerText = `${total}원`;
+        // 해당 일차의 총합 가격 업데이트
+        document.querySelector(`#${dayId} .total-price`).innerText = totalPrice + '원';
+
+        // 전체 총합 업데이트
+        updateOverallTotal();
     }
 
     // 드래그 앤 드롭 기능 적용
@@ -359,12 +441,12 @@
         group: 'shared',
         animation: 150,
         onAdd: function (evt) {
-            updateTotalPrice('day1'); // 총합 업데이트 호출
-            const item = evt.item; // 추가된 아이템
-            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
+            const item = evt.item;
+            const cancelButton = item.querySelector('.cancel-button');
             if (cancelButton) {
                 cancelButton.style.display = 'block'; // 취소 버튼 표시
             }
+            updateTotalPrice('day1'); // 총합 업데이트 호출
         }
     });
     const day2Sortable = new Sortable(document.querySelector('#day2 .sortable-list'), {
@@ -393,19 +475,19 @@
     });
 
     // 추가적으로 전체 총합 업데이트 기능 추가
+    // 전체 총합 업데이트 함수
     function updateOverallTotal() {
         let overallTotal = 0;
+        const days = document.querySelectorAll('.days .day');
 
-        // 각 일차의 총합 계산
-        document.querySelectorAll('.total-price').forEach(total => {
-            const priceText = total.innerText; // 가격 정보 가져오기
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 숫자만 추출
-            overallTotal += price; // 전체 총합 계산
+        days.forEach(day => {
+            const dayPrice = parseInt(day.querySelector('.total-price').innerText.replace(/[^0-9]/g, '')); // 가격 가져오기
+            overallTotal += isNaN(dayPrice) ? 0 : dayPrice; // 숫자가 아니면 0으로 처리
         });
 
-        // 전체 총합 업데이트
-        document.getElementById('overall-total').innerText = `${overallTotal}원`;
+        document.getElementById('overall-total').innerText = overallTotal + '원'; // 전체 총합 업데이트
     }
 </script>
+
 </body>
 </html>
