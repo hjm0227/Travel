@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <style>
+        .schedule-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        .day-box {
+            width: 250px;
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .day-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .item-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .item-list li {
+            background-color: #fff;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<h1>My Saved Schedule</h1>
+<div class="schedule-container" id="scheduleContainer">
+    <!-- 일정이 여기에 동적으로 추가됩니다 -->
+</div>
+
+<script>
+    // 저장된 일정을 불러와서 표시하는 함수
+    function loadSavedSchedule() {
+        const savedData = JSON.parse(localStorage.getItem('savedSchedule')) || [];
+        const scheduleContainer = document.getElementById('scheduleContainer');
+        scheduleContainer.innerHTML = ''; // 기존 내용을 초기화
+
+        savedData.forEach(dayData => {
+            // 각 날짜에 대한 박스 생성
+            const dayBox = document.createElement('div');
+            dayBox.classList.add('day-box');
+
+            // 날짜 제목 생성
+            const dayTitle = document.createElement('div');
+            dayTitle.classList.add('day-title');
+            dayTitle.textContent = `Day ${dayData.day}`;
+            dayBox.appendChild(dayTitle);
+
+            // 항목 리스트 생성
+            const itemList = document.createElement('ul');
+            itemList.classList.add('item-list');
+            dayData.items.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                itemList.appendChild(listItem);
+            });
+
+            dayBox.appendChild(itemList);
+            scheduleContainer.appendChild(dayBox);
+        });
+    }
+
+    // 페이지 로드 시 저장된 일정을 불러오기
+    window.onload = loadSavedSchedule;
+</script>
+
+</body>
+</html>

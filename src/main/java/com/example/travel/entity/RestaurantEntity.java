@@ -21,5 +21,6 @@ public class RestaurantEntity {
     private Integer price;
     private String imageUrl;
     private String place;
+    private String description;
 
 }

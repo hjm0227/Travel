@@ -24,6 +24,7 @@ public class PlayEntity {
     private Integer price;
     private String imageUrl;
     private String place;
+    private String description;
 
     @ManyToMany(fetch = FetchType.EAGER) //다대다 관계 설정
     @JoinTable( //중간 테이블 지정(play_type)

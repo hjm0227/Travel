@@ -30,6 +30,7 @@ public class MemberController {
             model.addAttribute("errorMessage", "이미 존재하는 아이디입니다.");  // 회원가입 실패 시 메시지 전달
             return "save";  // 회원가입 페이지로 다시 이동
         }
+
     }
 
     @GetMapping("/travel/login")
@@ -50,7 +51,7 @@ public class MemberController {
     }
     @GetMapping("/travel/home")
     public String home() {
-        return "home";  // "home"은 src/main/resources/templates 폴더에 위치해야 합니다.
+        return "home";
     }
 
 
@@ -58,5 +59,10 @@ public class MemberController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "home";  // 로그아웃 시 홈 페이지로
+    }
+
+    @GetMapping("/travel/mypage")
+    public String mypageForm() {
+        return "mypage";  // mypage.html로 이동
     }
 }

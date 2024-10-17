@@ -102,55 +102,13 @@
         }
 
         .home-button img {
-            width: 100%;
-            height: auto;
-            border: none;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
         }
+
         .item {
             position: relative; /* 자식 요소의 절대 위치 설정을 위한 relative */
-        }
-
-        .cancel-button {
-            position: absolute; /* 부모 요소를 기준으로 절대 위치 설정 */
-            bottom: 10px; /* 아래에서 10px */
-            right: 10px; /* 오른쪽에서 10px */
-            padding: 5px 10px; /* 버튼 패딩 */
-            background-color: #f44336; /* 버튼 배경색 */
-            color: #ffffff; /* 버튼 텍스트 색상 */
-            border: none; /* 기본 테두리 제거 */
-            border-radius: 4px; /* 모서리 둥글게 */
-            cursor: pointer; /* 커서 모양 변경 */
-            display: none;
-
-        }
-        .item.dragged .cancel-button {
-            display: block; /* 드래그된 아이템에만 표시 */
-        }
-
-        .cancel-button:hover {
-            background-color: #d32f2f; /* 호버 시 버튼 색상 변경 */
-        }
-
-        .extra-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 40px; /* 이미지 크기 */
-            height: 40px;
-            object-fit: cover; /* 이미지를 영역에 맞게 조정 */
-            border-radius: 50%; /* 이미지를 둥글게 */
-        }
-
-        .map-image {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 40px; /* 이미지 크기 */
-            height: 40px;
-            object-fit: cover; /* 이미지를 영역에 맞게 조정 */
-            border-radius: 50%; /* 이미지를 둥글게 */
-            margin-right: 50px; /* 오른쪽 여백 추가 */
         }
 
         .total-sum {
@@ -185,67 +143,111 @@
             display: block; /* 드래그된 아이템에만 표시 */
         }
 
-
-    </style>
-    <script>
-        document.querySelectorAll('.item').forEach(item => {
-            item.addEventListener('dragstart', function() {
-                this.classList.add('dragged'); // 드래그 시작 시 'dragged' 클래스 추가
-            });
-
-            item.addEventListener('dragend', function() {
-                this.classList.remove('dragged'); // 드래그 끝날 시 'dragged' 클래스 제거
-            });
-        });
-
-        function showTab(event, tabName) {
-            var i, tabContent, tablinks;
-            tabContent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabContent.length; i++) {
-                tabContent[i].classList.remove("active"); // 모든 탭 콘텐츠 숨기기
-            }
-            tablinks = document.getElementsByClassName("tab");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active"); // 모든 탭에서 active 클래스 제거
-            }
-            document.getElementById(tabName).classList.add("active"); // 선택한 탭 콘텐츠 보여주기
-            event.currentTarget.classList.add("active"); // 클릭한 탭에 active 클래스 추가
+        .cancel-button {
+            display: none; /* 기본적으로 숨김 */
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // 초기 상태: 첫 번째 탭을 보이도록 설정
-            const firstTab = document.querySelector('.tab');
-            const firstTabContent = document.querySelector('.tab-content');
-            if (firstTab && firstTabContent) {
-                firstTab.classList.add("active"); // 첫 번째 탭에 active 클래스 추가
-                firstTabContent.classList.add("active"); // 첫 번째 탭 콘텐츠에 active 클래스 추가
-            }
-        });
-    </script>
-</head>
-<body>
+        .cancel-button:hover {
+            background-color: #d32f2f;
+        }
 
+        .extra-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px; /* 왼쪽에서 오른쪽으로 이동할 때 변경할 수 있습니다. */
+            width: 40px; /* 이미지 크기 */
+            height: 40px;
+            object-fit: cover; /* 이미지를 영역에 맞게 조정 */
+            border-radius: 50%; /* 이미지를 둥글게 */
+        }
+
+        .map-image {
+            position: absolute;
+            top: 10px;
+            right: 60px; /* extra-icon 왼쪽에 위치하도록 조정 */
+            width: 40px; /* 이미지 크기 */
+            height: 40px;
+            object-fit: cover; /* 이미지를 영역에 맞게 조정 */
+            border-radius: 50%; /* 이미지를 둥글게 */
+        }
+
+        .image-btn {
+            position: absolute; /* 버튼의 위치를 절대적으로 설정 */
+            top: 10px; /* 상단 여백 조정 */
+            right: 110px; /* map-image 왼쪽에 위치하도록 조정 */
+            background: transparent; /* 버튼 배경 투명하게 설정 */
+            border: none; /* 버튼 경계 없애기 */
+            cursor: pointer; /* 커서 스타일 변경 */
+        }
+        .container {
+            overflow: visible;
+        }
+
+        .tooltip {
+            display: none; /* 기본적으로 숨김 */
+            position: absolute; /* 버튼에 상대적 위치 지정 */
+            top: 30px; /* 버튼 아래로 위치 조정 */
+            right: 0;
+            background-color: #fff9c4;
+            color: black;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 9999; /* 다른 요소들보다 위에 표시 */
+            width: 500px;
+            white-space: normal;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.5;
+            font-family: 'Courier New', Courier, monospace;
+            background-image: linear-gradient(to bottom, #fff9c4, #f0f0f0);
+            border-left: 5px solid #f9a825;
+            /* 툴팁이 화면 밖으로 나가지 않도록 보정 */
+            overflow: visible; /* 툴팁이 화면 밖으로 나갈 때 보이게 설정 */
+        }
+
+        /* 버튼 호버 시 툴팁 표시 */
+        .image-btn:hover .tooltip {
+            display: block; /* 호버 시 툴팁 표시 */
+            z-index: 9999; /* 툴팁이 다른 요소들 위로 나옴 */
+        }
+    </style>
+</head>
+
+<body>
 <!-- 홈 버튼을 상단에 배치 -->
 <a href="travel/home" class="home-button">
     <img src="/images/home.png" alt="홈으로 돌아가기" />
 </a>
+<button id="save-btn" onclick="saveDraggedItems()">저장</button>
+
 <div class="container">
     <!-- 왼쪽: 일정 리스트 (1일차, 2일차, 3일차 고정) -->
     <div class="days">
         <div class="day" id="day1">
             <h3>1일차</h3>
-            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
-            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
+            <div class="sortable-list"></div>
+            <p>총합: <span class="total-price">0원</span></p>
         </div>
         <div class="day" id="day2">
             <h3>2일차</h3>
-            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
-            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
+            <div class="sortable-list"></div>
+            <p>총합: <span class="total-price">0원</span></p>
         </div>
         <div class="day" id="day3">
             <h3>3일차</h3>
-            <div class="sortable-list"></div> <!-- 추가된 항목들이 들어올 위치 -->
-            <p>총합: <span class="total-price">0원</span></p> <!-- 추가된 총합 표시 -->
+            <div class="sortable-list"></div>
+            <p>총합: <span class="total-price">0원</span></p>
         </div>
         <div class="total-sum">
             <h2>총합 금액: <span id="overall-total">0원</span></h2>
@@ -255,34 +257,34 @@
     <!-- 오른쪽: 카테고리 리스트 (놀거리, 식당, 숙소) -->
     <div class="right-column">
         <div>
-            <div class="tab" onclick="showTab(event, 'activities')">놀거리</div>
+            <div class="tab active" onclick="showTab(event, 'activities')">놀거리</div>
             <div class="tab" onclick="showTab(event, 'restaurants')">식당</div>
             <div class="tab" onclick="showTab(event, 'accommodations')">숙소</div>
         </div>
 
+        <!-- 놀거리 탭 콘텐츠 -->
         <div id="activities" class="tab-content active">
             <h3>놀거리</h3>
             <div class="scrollable" id="play-list">
                 <div th:each="play : ${plays}" class="item" th:data-id="${play.id}">
-                    <!-- 분류 이미지 -->
                     <img src="/images/play.png" alt="놀거리 아이콘" class="extra-icon">
-                    <!-- 이미지 추가 -->
                     <img th:src="${play.imageUrl}" alt="놀거리 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                    <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${play.name}"></h3>
                         <div th:if="${play != null}">
-                            <p><!--타입:-->
-                                <span th:each="type, iterStat : ${play.types}">
-                                    <span th:text="'#' + ${type.typeName} + (iterStat.last ? '' : '  ')"></span>
+                            <p> <span th:each="type, iterStat : ${play.types}">
+                                    <span th:text="'#' + ${type.typeName}"></span>
                                 </span>
                             </p>
-                            <p>가격:
-                                <span th:text="${play.price} + '원'"></span>
-                            </p>
+                            <p>가격: <span th:text="${play.price} + '원'"></span></p>
                         </div>
                     </div>
-                    <!-- map 이미지 넣고 클릭 시 컬럼 place 안에 링크로 이동 -->
+
+                    <button class="image-btn" onclick="toggleTooltip(this)">
+                        <img src="/images/tool.png" alt="설명 버튼" style="width: 40px; height: 40px;">
+                        <div class="tooltip" style="display: none;" th:text="${play.description}"></div>
+                    </button>
+
                     <a th:href="${play.place}" target="_blank">
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
@@ -296,11 +298,8 @@
             <h3>식당</h3>
             <div class="scrollable" id="restaurant-list">
                 <div th:each="restaurant : ${restaurants}" class="item" th:data-id="${restaurant.id}">
-                    <!-- 분류 이미지 -->
                     <img src="/images/restaurant.png" alt="식당 아이콘" class="extra-icon">
-                    <!-- 이미지 추가 -->
                     <img th:src="${restaurant.imageUrl}" alt="식당 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                    <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${restaurant.name}"></h3>
                         <p>타입: <span th:text="${restaurant.type}"></span></p>
@@ -309,7 +308,12 @@
                     <a th:href="${restaurant.place}" target="_blank">
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
+
                     <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
+                    <button class="image-btn" onclick="toggleTooltip(this)">
+                        <img src="/images/tool.png" alt="설명 버튼" style="width: 40px; height: 40px;">
+                        <div class="tooltip" style="display: none;" th:text="${restaurant.description}"></div> <!-- 툴팁 추가 -->
+                    </button>
                 </div>
             </div>
         </div>
@@ -319,11 +323,8 @@
             <h3>숙소</h3>
             <div class="scrollable" id="hotel-list">
                 <div th:each="hotel : ${hotels}" class="item" th:data-id="${hotel.id}">
-                    <!-- 분류 이미지 -->
                     <img src="/images/hotel.png" alt="숙소 아이콘" class="extra-icon">
-                    <!-- 이미지 추가 -->
                     <img th:src="${hotel.imageUrl}" alt="숙소 이미지" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                    <!-- 타입, 가격 정보 -->
                     <div>
                         <h3 th:text="${hotel.name}"></h3>
                         <p>타입: <span th:text="${hotel.type}"></span></p>
@@ -333,161 +334,246 @@
                         <img src="/images/map.png" alt="지도 이미지" class="map-image">
                     </a>
                     <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
+                    <button class="cancel-button" style="display: none;" onclick="cancelMove(this)">취소</button>
+                    <button class="image-btn" onclick="toggleTooltip(this)">
+                        <img src="/images/tool.png" alt="설명 버튼" style="width: 40px; height: 40px;">
+                        <div class="tooltip" style="display: none;" th:text="${hotel.description}"></div> <!-- 툴팁 추가 -->
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Sortable.js 라이브러리를 사용하여 드래그 앤 드롭 기능 추가 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-<script>
-    // URL에서 기간 정보 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    const duration = urlParams.get('duration');
 
-    // 모든 일차를 숨김
-    document.querySelectorAll('.day').forEach(day => {
-        day.style.display = 'none';
-    });
+    <!-- Sortable.js 라이브러리를 사용하여 드래그 앤 드롭 기능 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script>
+        // URL에서 기간 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const duration = urlParams.get('duration');
 
-    // 선택된 기간에 따라 일차 표시
-    if (duration === '1day') {
-        document.getElementById('day1').style.display = 'block';
-    } else if (duration === '2day') {
-        document.getElementById('day1').style.display = 'block';
-        document.getElementById('day2').style.display = 'block';
-    } else if (duration === '3day') {
-        document.getElementById('day1').style.display = 'block';
-        document.getElementById('day2').style.display = 'block';
-        document.getElementById('day3').style.display = 'block';
-    }
-
-    function cancelMove(button) {
-        const item = button.closest('.item'); // .item 클래스를 가진 상위 요소를 찾음
-        // 버튼의 부모 요소 (아이템)
-        const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID를 데이터 속성에서 가져옴
-        const dayId = item.closest('.day').id; // 아이템이 있는 day의 ID
-
-        // 원래 카테고리 리스트에 항목 추가
-        const originalList = document.getElementById(originalListId);
-        originalList.appendChild(item); // 원래 리스트로 아이템 복귀
-
-        // 총합에서 가격을 빼기
-        updateTotalPrice(dayId);
-
-        // 취소 버튼 숨김
-        button.style.display = 'none';
-    }
-
-    // 드래그 앤 드롭 기능 적용
-    new Sortable(document.querySelector('#day1 .sortable-list'), { group: 'shared', animation: 150 });
-    new Sortable(document.querySelector('#day2 .sortable-list'), { group: 'shared', animation: 150 });
-    new Sortable(document.querySelector('#day3 .sortable-list'), { group: 'shared', animation: 150 });
-
-    // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정 (드롭 비활성화)
-    new Sortable(document.getElementById('play-list'), {
-        group: 'shared',
-        animation: 150,
-        // 드롭을 방지하기 위해 onAdd 이벤트를 비워둡니다
-        onAdd: function (evt) {
-            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-        }
-    });
-    new Sortable(document.getElementById('restaurant-list'), {
-        group: 'shared',
-        animation: 150,
-        onAdd: function (evt) {
-            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-        }
-    });
-    new Sortable(document.getElementById('hotel-list'), {
-        group: 'shared',
-        animation: 150,
-        onAdd: function (evt) {
-            evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-        }
-    });
-
-    // 카테고리 항목에 원래 리스트 ID 저장
-    document.querySelectorAll('.item').forEach(item => {
-        const category = item.closest('.category').querySelector('h3').innerText; // 카테고리 제목
-        item.setAttribute('data-original-list',
-            category === '놀거리' ? 'play-list' :
-                category === '식당' ? 'restaurant-list' :
-                    'hotel-list'); // 원래 리스트 ID 설정
-    });
-
-    // 각 일차의 총합 가격 업데이트 함수
-    function updateTotalPrice(dayId) {
-        let totalPrice = 0;
-        const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
-
-        items.forEach(item => {
-            const priceText = item.querySelector('p:nth-child(2) span').innerText; // 가격 텍스트 가져오기
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 숫자만 추출
-            totalPrice += isNaN(price) ? 0 : price; // 숫자가 아니면 0으로 처리
+        document.querySelectorAll('.day').forEach(day => {
+            day.style.display = 'none';
         });
 
-        // 해당 일차의 총합 가격 업데이트
-        document.querySelector(`#${dayId} .total-price`).innerText = totalPrice + '원';
-
-        // 전체 총합 업데이트
-        updateOverallTotal();
-    }
-
-    // 드래그 앤 드롭 기능 적용
-    const day1Sortable = new Sortable(document.querySelector('#day1 .sortable-list'), {
-        group: 'shared',
-        animation: 150,
-        onAdd: function (evt) {
-            const item = evt.item;
-            const cancelButton = item.querySelector('.cancel-button');
-            if (cancelButton) {
-                cancelButton.style.display = 'block'; // 취소 버튼 표시
-            }
-            updateTotalPrice('day1'); // 총합 업데이트 호출
+        if (duration === '1day') {
+            document.getElementById('day1').style.display = 'block';
+        } else if (duration === '2day') {
+            document.getElementById('day1').style.display = 'block';
+            document.getElementById('day2').style.display = 'block';
+        } else if (duration === '3day') {
+            document.getElementById('day1').style.display = 'block';
+            document.getElementById('day2').style.display = 'block';
+            document.getElementById('day3').style.display = 'block';
         }
-    });
-    const day2Sortable = new Sortable(document.querySelector('#day2 .sortable-list'), {
-        group: 'shared',
-        animation: 150,
-        onAdd: function (evt) {
-            updateTotalPrice('day2'); // 총합 업데이트 호출
-            const item = evt.item; // 추가된 아이템
-            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
-            if (cancelButton) {
-                cancelButton.style.display = 'block'; // 취소 버튼 표시
-            }
-        }
-    });
-    const day3Sortable = new Sortable(document.querySelector('#day3 .sortable-list'), {
-        group: 'shared',
-        animation: 150,
-        onAdd: function (evt) {
-            updateTotalPrice('day3'); // 총합 업데이트 호출
-            const item = evt.item; // 추가된 아이템
-            const cancelButton = item.querySelector('.cancel-button'); // 취소 버튼
-            if (cancelButton) {
-                cancelButton.style.display = 'block'; // 취소 버튼 표시
-            }
-        }
-    });
 
-    // 추가적으로 전체 총합 업데이트 기능 추가
-    // 전체 총합 업데이트 함수
-    function updateOverallTotal() {
-        let overallTotal = 0;
-        const days = document.querySelectorAll('.days .day');
-
-        days.forEach(day => {
-            const dayPrice = parseInt(day.querySelector('.total-price').innerText.replace(/[^0-9]/g, '')); // 가격 가져오기
-            overallTotal += isNaN(dayPrice) ? 0 : dayPrice; // 숫자가 아니면 0으로 처리
+        // Sortable.js 설정
+        const sortableLists = document.querySelectorAll('.sortable-list');
+        sortableLists.forEach(list => {
+            new Sortable(list, {
+                animation: 150,
+                onStart: function (evt) {
+                    evt.item.classList.add('dragged'); // 드래그 시작 시 dragged 클래스 추가
+                },
+                onend: function (evt) {
+                    evt.item.classList.remove('dragged'); // 드래그 종료 시 dragged 클래스 제거
+                }
+            });
         });
 
-        document.getElementById('overall-total').innerText = overallTotal + '원'; // 전체 총합 업데이트
-    }
-</script>
 
+        // 드래그 앤 드롭 기능 적용
+        new Sortable(document.querySelector('#day1 .sortable-list'), {group: 'shared', animation: 150});
+        new Sortable(document.querySelector('#day2 .sortable-list'), {group: 'shared', animation: 150});
+        new Sortable(document.querySelector('#day3 .sortable-list'), {group: 'shared', animation: 150});
+
+        // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정 (드롭 비활성화)
+        new Sortable(document.getElementById('play-list'), {
+            group: 'shared',
+            animation: 150,
+            onStart: function (evt) {
+                // 드래그 시작 시 원래 리스트 ID 저장
+                evt.item.setAttribute('data-original-list', 'play-list');
+            },
+            onAdd: function (evt) {
+                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+            }
+        });
+        new Sortable(document.getElementById('restaurant-list'), {
+            group: 'shared',
+            animation: 150,
+            onStart: function (evt) {
+                evt.item.setAttribute('data-original-list', 'restaurant-list');
+            },
+            onAdd: function (evt) {
+                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+            }
+        });
+        new Sortable(document.getElementById('hotel-list'), {
+            group: 'shared',
+            animation: 150,
+            onStart: function (evt) {
+                evt.item.setAttribute('data-original-list', 'hotel-list');
+            },
+            onAdd: function (evt) {
+                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
+            }
+        });
+
+        // 드래그 앤 드롭 기능 적용
+        const day1Sortable = new Sortable(document.querySelector('#day1 .sortable-list'), {
+            group: 'shared',
+            animation: 150,
+            onAdd: function (evt) {
+                updateTotalPrice('day1'); // 총합 업데이트 호출
+                const item = evt.item; // 추가된 아이템
+                item.querySelector('.cancel-button').style.display = 'block'; // 취소 버튼 보이기
+            }
+        });
+        const day2Sortable = new Sortable(document.querySelector('#day2 .sortable-list'), {
+            group: 'shared',
+            animation: 150,
+            onAdd: function (evt) {
+                updateTotalPrice('day2'); // 총합 업데이트 호출
+                const item = evt.item; // 추가된 아이템
+                item.querySelector('.cancel-button').style.display = 'block'; // 취소 버튼 보이기
+            }
+        });
+        const day3Sortable = new Sortable(document.querySelector('#day3 .sortable-list'), {
+            group: 'shared',
+            animation: 150,
+            onAdd: function (evt) {
+                updateTotalPrice('day3'); // 총합 업데이트 호출
+                const item = evt.item; // 추가된 아이템
+                item.querySelector('.cancel-button').style.display = 'block'; // 취소 버튼 보이기
+            }
+        });
+
+        // 취소 버튼 클릭 시 원래 리스트로 이동하는 함수
+        function cancelMove(button) {
+            const item = button.parentElement; // 항목 가져오기
+            const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID 가져오기
+            const originalList = document.getElementById(originalListId); // 원래 리스트 요소 찾기
+
+            originalList.appendChild(item); // 항목을 원래 리스트로 이동
+            item.querySelector('.cancel-button').style.display = 'none'; // 취소 버튼 숨기기
+
+            // 해당 일차의 총합 가격 다시 업데이트
+            const dayId = item.closest('.day').id;
+            updateTotalPrice(dayId);
+            updateOverallTotal(); // 전체 총합 업데이트
+        }
+
+
+        // 각 일차의 총합 가격 업데이트 함수
+        function updateTotalPrice(dayId) {
+            let totalPrice = 0;
+            const items = document.querySelectorAll(`#${dayId} .sortable-list .item`);
+
+            items.forEach(item => {
+                const priceText = item.querySelector('p:nth-child(2) span').innerText; // 가격 텍스트 가져오기
+                const price = parseInt(priceText.replace(/[^0-9]/g, '')); // 숫자만 추출
+                totalPrice += isNaN(price) ? 0 : price; // 숫자가 아니면 0으로 처리
+            });
+
+            // 해당 일차의 총합 가격 업데이트
+            document.querySelector(`#${dayId} .total-price`).innerText = totalPrice + '원';
+
+            // 전체 총합 업데이트
+            updateOverallTotal();
+        }
+
+        // 전체 총합 업데이트 함수
+        function updateOverallTotal() {
+            let overallTotal = 0;
+            const days = document.querySelectorAll('.days .day');
+
+            days.forEach(day => {
+                const dayPrice = parseInt(day.querySelector('.total-price').innerText.replace(/[^0-9]/g, '')); // 가격 가져오기
+                overallTotal += isNaN(dayPrice) ? 0 : dayPrice; // 숫자가 아니면 0으로 처리
+            });
+
+            document.getElementById('overall-total').innerText = overallTotal + '원'; // 전체 총합 업데이트
+        }
+
+        function toggleTooltip(button) {
+            const tooltip = button.querySelector('.tooltip');
+            if (tooltip.style.display === 'none' || tooltip.style.display === '') {
+                tooltip.style.display = 'block';
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        // 페이지 로드 시 첫 번째 탭을 기본 활성화
+        document.addEventListener("DOMContentLoaded", function() {
+            // 기본 탭과 콘텐츠에 active 클래스 추가
+            const defaultTab = document.getElementById("play-tab");
+            const defaultContent = document.getElementById("play-content");
+
+            // 기본 탭이 활성화된 상태로 설정
+            defaultTab.classList.add("active");   // 탭 버튼에 active 클래스 추가
+            defaultContent.classList.add("active"); // 콘텐츠에 active 클래스 추가
+        });
+
+        // 탭을 클릭했을 때 호출되는 함수
+        function showTab(event, tabId) {
+            // 모든 탭 콘텐츠를 숨김
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(function(content) {
+                content.classList.remove('active');
+            });
+
+            // 모든 탭 버튼에서 active 클래스 제거
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+
+            // 선택된 탭 콘텐츠만 보여주기
+            document.getElementById(tabId).classList.add('active');
+
+            // 클릭한 탭 버튼에 active 클래스 추가
+            event.currentTarget.classList.add('active');
+        }
+        function toggleTooltip(button) {
+            // 클릭한 버튼의 툴팁을 선택
+            const tooltip = button.querySelector('.tooltip');
+
+            // 클릭한 툴팁이 열려 있는지 확인
+            const isOpen = tooltip.style.display === 'block';
+
+            // 모든 툴팁을 숨김
+            const allTooltips = document.querySelectorAll('.tooltip');
+            allTooltips.forEach(tip => {
+                tip.style.display = 'none';
+            });
+
+            // 클릭한 툴팁이 열려 있지 않으면 열기
+            if (!isOpen) {
+                tooltip.style.display = 'block';
+            }
+        }
+
+        function saveDraggedItems() {
+            const dayColumns = document.querySelectorAll('.day-column');
+            const savedData = [];
+
+                dayColumn.querySelectorAll('.draggable-item').
+                dayColumns.forEach((dayColumn, index) => {
+                    const items = [];forEach(item => {
+                    items.push(item.textContent);
+                });
+                savedData.push({ day: index + 1, items });
+            });
+
+            // 로컬 저장소에 저장
+            localStorage.setItem('savedSchedule', JSON.stringify(savedData));
+        }
+
+
+
+    </script>
 </body>
 </html>

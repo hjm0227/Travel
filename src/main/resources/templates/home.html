@@ -184,6 +184,7 @@
 
             <!-- 로그인 상태 확인 -->
             <a th:if="${session.isLoggedIn}" href="/travel/logout" aria-label="로그아웃">로그아웃</a>
+            <a th:if="${session.isLoggedIn}" href="/travel/mypage" aria-label="커뮤니티">마이페이지</a>
             <a th:if="${session.isLoggedIn}" href="/community" aria-label="커뮤니티">커뮤니티</a>
         </div>
 
@@ -249,6 +250,9 @@
     </footer>
 </div>
 <script>
+    // 서버에서 로그인 상태 전달 (Thymeleaf를 사용하여 세션 값을 HTML에서 자바스크립트로 전달)
+    const isLoggedIn = /*[[${session.isLoggedIn != null}]]*/ [[${session.isLoggedIn != null}]];
+
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const loginSuccess = urlParams.get('loginSuccess');
@@ -263,11 +267,19 @@
     };
 
     document.getElementById('duration-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const duration = document.getElementById('duration').value;
-        window.location.href = `/recommend?duration=${duration}`; // URL에 선택한 기간 추가
+        // 로그인 여부 확인
+        if (!isLoggedIn) {
+            event.preventDefault(); // 제출 중단
+            alert('로그인이 필요합니다! 로그인 페이지로 이동합니다.');
+            window.location.href = '/travel/login'; // 로그인 페이지로 리다이렉트
+        } else {
+            event.preventDefault(); // 폼 제출 중단
+            const duration = document.getElementById('duration').value;
+            window.location.href = `/recommend?duration=${duration}`; // URL에 선택한 기간 추가
+        }
     });
 
 </script>
+
 </body>
 </html>
