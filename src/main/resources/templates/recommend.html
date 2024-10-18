@@ -211,7 +211,7 @@
             width: 50px; /* 이미지 크기 설정 */
             position: fixed; /* 화면에 고정 */
             top: 40px; /* 화면의 상단에서 20px 아래 */
-            left: 2%; /* 화면의 가로 */
+            left: 1%; /* 화면의 가로 */
         }
 
         .home-button img {
@@ -225,7 +225,7 @@
             font-weight: bold; /* 굵은 글씨 */
             position: fixed; /* 화면에 고정 */
             top: 120px;
-            left: 1.4%; /* 화면의 가로 */
+            left: 0%; /* 화면의 가로 */
             color: #007bff; /* 강조 색상 */
             background-color: #f0f8ff; /* 부드러운 배경 색상 */
             padding: 10px 15px; /* 안쪽 여백 - 크기 증가 */
@@ -386,6 +386,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const duration = urlParams.get('duration');
 
+        //모든 일차 숨기기
         document.querySelectorAll('.day').forEach(day => {
             day.style.display = 'none';
         });
@@ -402,16 +403,43 @@
         }
 
         // Sortable.js 설정
-        const sortableLists = document.querySelectorAll('.sortable-list');
-        sortableLists.forEach(list => {
-            new Sortable(list, {
+        const daySortables = ['#day1', '#day2', '#day3'];
+        daySortables.forEach(day => {
+            new Sortable(document.querySelector(`${day} .sortable-list`), {
+                group: {
+                    name: 'shared',
+                    pull: true, // 복제 없이 이동만 허용
+                    put: true // 왼쪽 리스트로 이동 가능
+                },
                 animation: 150,
                 onStart: function (evt) {
                     evt.item.classList.add('dragged'); // 드래그 시작 시 dragged 클래스 추가
                 },
-                onend: function (evt) {
+                onEnd: function (evt) {
                     evt.item.classList.remove('dragged'); // 드래그 종료 시 dragged 클래스 제거
+                },
+                onAdd: function (evt) {
+                    const dayId = day.replace('#', ''); // 현재 일차 ID
+                    updateTotalPrice(dayId); // 총합 업데이트 호출
+                    const item = evt.item; // 추가된 아이템
+                    item.querySelector('.cancel-button').style.display = 'block'; // 취소 버튼 보이기
                 }
+            });
+        });
+
+        // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정 (오른쪽에서 왼쪽으로만 이동 가능)
+        const lists = ['play-list', 'restaurant-list', 'hotel-list'];
+        lists.forEach(listId => {
+            new Sortable(document.getElementById(listId), {
+                group: {
+                    name: 'shared',
+                    pull: true, // 복제 없이 이동만 허용
+                    put: false // 오른쪽 리스트로 항목이 다시 드래그되지 않도록 설정
+                },
+                animation: 150,
+                onStart: function (evt) {
+                    evt.item.setAttribute('data-original-list', listId);
+                },
             });
         });
 
@@ -421,38 +449,6 @@
         new Sortable(document.querySelector('#day2 .sortable-list'), {group: 'shared', animation: 150});
         new Sortable(document.querySelector('#day3 .sortable-list'), {group: 'shared', animation: 150});
 
-        // 놀거리, 식당, 숙소 리스트에서 항목을 드래그 가능하게 설정 (드롭 비활성화)
-        new Sortable(document.getElementById('play-list'), {
-            group: 'shared',
-            animation: 150,
-            onStart: function (evt) {
-                // 드래그 시작 시 원래 리스트 ID 저장
-                evt.item.setAttribute('data-original-list', 'play-list');
-            },
-            onAdd: function (evt) {
-                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-            }
-        });
-        new Sortable(document.getElementById('restaurant-list'), {
-            group: 'shared',
-            animation: 150,
-            onStart: function (evt) {
-                evt.item.setAttribute('data-original-list', 'restaurant-list');
-            },
-            onAdd: function (evt) {
-                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-            }
-        });
-        new Sortable(document.getElementById('hotel-list'), {
-            group: 'shared',
-            animation: 150,
-            onStart: function (evt) {
-                evt.item.setAttribute('data-original-list', 'hotel-list');
-            },
-            onAdd: function (evt) {
-                evt.from.appendChild(evt.item); // 원래 위치로 다시 이동
-            }
-        });
 
         // 드래그 앤 드롭 기능 적용
         const day1Sortable = new Sortable(document.querySelector('#day1 .sortable-list'), {
@@ -577,39 +573,6 @@
                 tooltip.style.display = 'block';
             }
         }
-
-        function saveDraggedItems() {
-            const dayColumns = document.querySelectorAll('.day-column');
-            const savedData = [];
-
-                dayColumn.querySelectorAll('.draggable-item').
-                dayColumns.forEach((dayColumn, index) => {
-                    const items = [];forEach(item => {
-                    items.push(item.textContent);
-                });
-                savedData.push({ day: index + 1, items });
-            });
-        }
-        function saveSelectedItems() {
-            // 선택된 Play 항목 수집
-            const playIds = Array.from(document.querySelectorAll('#play-list .item')).map(item => item.getAttribute('data-id'));
-
-            // 선택된 Restaurant 항목 수집
-            const restaurantIds = Array.from(document.querySelectorAll('#restaurant-list .item')).map(item => item.getAttribute('data-id'));
-
-            // 선택된 Hotel 항목 수집
-            const hotelIds = Array.from(document.querySelectorAll('#hotel-list .item')).map(item => item.getAttribute('data-id'));
-
-            // 숨겨진 input 필드에 값을 설정
-            document.getElementById('playIds').value = playIds.join(',');
-            document.getElementById('restaurantIds').value = restaurantIds.join(',');
-            document.getElementById('hotelIds').value = hotelIds.join(',');
-
-            // 폼 제출
-            document.getElementById('saveForm').submit();
-        }
     </script>
-
-<button onclick="saveSelectedItems()">저장</button>
 </body>
 </html>
