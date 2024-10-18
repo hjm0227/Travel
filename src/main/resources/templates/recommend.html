@@ -90,23 +90,6 @@
         .item p {
             margin: 5px 0;
         }
-
-        /* 홈 버튼 스타일 추가 */
-        .home-button {
-            display: block;
-            width: 50px; /* 이미지 크기 설정 */
-            margin: 20px auto; /* 중앙 정렬 */
-            position: absolute; /* 상단 고정 */
-            top: 20px;
-            left: 20px;
-        }
-
-        .home-button img {
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-        }
-
         .item {
             position: relative; /* 자식 요소의 절대 위치 설정을 위한 relative */
         }
@@ -221,6 +204,53 @@
             display: block; /* 호버 시 툴팁 표시 */
             z-index: 9999; /* 툴팁이 다른 요소들 위로 나옴 */
         }
+
+        /* 홈 버튼 스타일 수정 */
+        .home-button {
+            display: block;
+            width: 50px; /* 이미지 크기 설정 */
+            position: fixed; /* 화면에 고정 */
+            top: 40px; /* 화면의 상단에서 20px 아래 */
+            left: 2%; /* 화면의 가로 */
+        }
+
+        .home-button img {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        /* 강조 표시 스타일 */
+        .mbti {
+            font-weight: bold; /* 굵은 글씨 */
+            position: fixed; /* 화면에 고정 */
+            top: 120px;
+            left: 1.4%; /* 화면의 가로 */
+            color: #007bff; /* 강조 색상 */
+            background-color: #f0f8ff; /* 부드러운 배경 색상 */
+            padding: 10px 15px; /* 안쪽 여백 - 크기 증가 */
+            border-radius: 8px; /* 둥근 모서리 - 약간 확대 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 미세한 그림자 효과 - 약간 강조 */
+            font-size: 1.5em; /* 글자 크기 조정 - 키움 */
+            display: block; /* 블록 요소로 설정 */
+            text-align: left; /* 왼쪽 정렬 */
+        }
+
+        /* 해시태그 스타일 */
+        .hashtag {
+            font-size: 1em; /* 글자 크기 조정 */
+            position: fixed; /* 화면에 고정 */
+            top: 160px;
+            left: 0px; /* 왼쪽에서 거리 */
+            color: #007bff; /* 해시태그 색상 */
+            margin: 10px 0; /* 위아래 여백 */
+            padding: 5px; /* 안쪽 여백 */
+            background-color: #e8f4fc; /* 부드러운 배경 색상 */
+            border-radius: 5px; /* 둥근 모서리 */
+            display: block; /* 블록 요소로 설정 */
+            text-align: left; /* 왼쪽 정렬 */
+        }
+
     </style>
 </head>
 
@@ -229,7 +259,10 @@
 <a href="travel/home" class="home-button">
     <img src="/images/home.png" alt="홈으로 돌아가기" />
 </a>
-<button id="save-btn" onclick="saveDraggedItems()">저장</button>
+<div class="mbti-container">
+    <span class="mbti" th:text="${mbti}"></span>
+    <span class="hashtag" th:text="${hashtags}"></span>
+</div>
 
 <div class="container">
     <!-- 왼쪽: 일정 리스트 (1일차, 2일차, 3일차 고정) -->
@@ -506,17 +539,6 @@
             }
         }
 
-        // 페이지 로드 시 첫 번째 탭을 기본 활성화
-        document.addEventListener("DOMContentLoaded", function() {
-            // 기본 탭과 콘텐츠에 active 클래스 추가
-            const defaultTab = document.getElementById("play-tab");
-            const defaultContent = document.getElementById("play-content");
-
-            // 기본 탭이 활성화된 상태로 설정
-            defaultTab.classList.add("active");   // 탭 버튼에 active 클래스 추가
-            defaultContent.classList.add("active"); // 콘텐츠에 active 클래스 추가
-        });
-
         // 탭을 클릭했을 때 호출되는 함수
         function showTab(event, tabId) {
             // 모든 탭 콘텐츠를 숨김
@@ -567,13 +589,27 @@
                 });
                 savedData.push({ day: index + 1, items });
             });
-
-            // 로컬 저장소에 저장
-            localStorage.setItem('savedSchedule', JSON.stringify(savedData));
         }
+        function saveSelectedItems() {
+            // 선택된 Play 항목 수집
+            const playIds = Array.from(document.querySelectorAll('#play-list .item')).map(item => item.getAttribute('data-id'));
 
+            // 선택된 Restaurant 항목 수집
+            const restaurantIds = Array.from(document.querySelectorAll('#restaurant-list .item')).map(item => item.getAttribute('data-id'));
 
+            // 선택된 Hotel 항목 수집
+            const hotelIds = Array.from(document.querySelectorAll('#hotel-list .item')).map(item => item.getAttribute('data-id'));
 
+            // 숨겨진 input 필드에 값을 설정
+            document.getElementById('playIds').value = playIds.join(',');
+            document.getElementById('restaurantIds').value = restaurantIds.join(',');
+            document.getElementById('hotelIds').value = hotelIds.join(',');
+
+            // 폼 제출
+            document.getElementById('saveForm').submit();
+        }
     </script>
+
+<button onclick="saveSelectedItems()">저장</button>
 </body>
 </html>

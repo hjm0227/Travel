@@ -30,7 +30,6 @@ public class MemberController {
             model.addAttribute("errorMessage", "이미 존재하는 아이디입니다.");  // 회원가입 실패 시 메시지 전달
             return "save";  // 회원가입 페이지로 다시 이동
         }
-
     }
 
     @GetMapping("/travel/login")
@@ -53,7 +52,6 @@ public class MemberController {
     public String home() {
         return "home";
     }
-
 
     @GetMapping("/travel/logout")
     public String logout(HttpSession session) {

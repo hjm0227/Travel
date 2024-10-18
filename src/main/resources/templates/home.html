@@ -267,17 +267,45 @@
     };
 
     document.getElementById('duration-form').addEventListener('submit', function(event) {
-        // 로그인 여부 확인
         if (!isLoggedIn) {
-            event.preventDefault(); // 제출 중단
+            event.preventDefault();
             alert('로그인이 필요합니다! 로그인 페이지로 이동합니다.');
-            window.location.href = '/travel/login'; // 로그인 페이지로 리다이렉트
+            window.location.href = '/travel/login';
         } else {
             event.preventDefault(); // 폼 제출 중단
             const duration = document.getElementById('duration').value;
-            window.location.href = `/recommend?duration=${duration}`; // URL에 선택한 기간 추가
+
+            // MBTI 값 세션에서 가져와 URL에 추가
+            const mbti = /*[[${session.mbti}]]*/ 'MBTI_NOT_FOUND'; // 세션에서 MBTI 값을 가져와 사용
+            window.location.href = `/recommend?duration=${duration}&mbti=${mbti}`; // 기간과 MBTI를 URL에 추가하여 리다이렉트
         }
     });
+
+
+    document.getElementById('duration-form').addEventListener('submit', function(event) {
+        if (!isLoggedIn) {
+            event.preventDefault();
+            alert('로그인이 필요합니다! 로그인 페이지로 이동합니다.');
+            window.location.href = '/travel/login';
+        } else {
+            event.preventDefault();
+            const duration = document.getElementById('duration').value;
+
+            // MBTI 값을 폼에서 가져오기
+            const eI = document.getElementById('e-i').value;
+            const nS = document.getElementById('n-s').value;
+            const fT = document.getElementById('f-t').value;
+            const pJ = document.getElementById('p-j').value;
+
+            // MBTI 조합 생성
+            const mbti = `${eI}${nS}${fT}${pJ}`;
+
+            // URL에 선택한 기간과 MBTI 추가
+            window.location.href = `/recommend?duration=${duration}&mbti=${mbti}`;
+        }
+    });
+
+
 
 </script>
 

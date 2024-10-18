@@ -6,12 +6,14 @@ import com.example.travel.Service.HotelService;
 import com.example.travel.entity.HotelEntity;
 import com.example.travel.entity.PlayEntity;
 import com.example.travel.entity.RestaurantEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ReadController {
@@ -27,16 +29,50 @@ public class ReadController {
         this.hotelService = hotelService;
     }
 
+    // MBTI에 따른 해시태그 매핑
+    private static final Map<String, String> mbtiHashtags = new HashMap<String, String>() {{
+        put("ISTJ", "#역사 #전통 #힐링");
+        put("ISFJ", "#자연 #평화 #힐링");
+        put("INFJ", "#감성 #예술 #평화");
+        put("INTJ", "#창의 #전통 #역사");
+        put("ISTP", "#모험 #액티비티 #자연");
+        put("ISFP", "#예술 #자연 #감성");
+        put("INFP", "#감성 #예술 #힐링");
+        put("INTP", "#창의 #모험 #액티비티");
+        put("ESTP", "#액티비티 #모험 #축제");
+        put("ESFP", "#축제 #사교 #예술");
+        put("ENFP", "#사교 #창의 #모험");
+        put("ENTP", "#창의 #액티비티 #모험");
+        put("ESTJ", "#리더십 #전통 #역사");
+        put("ESFJ", "#사교 #축제 #힐링");
+        put("ENFJ", "#리더십 #사교 #감성");
+        put("ENTJ", "#리더십 #액티비티 #창의");
+    }};
+
     // 추천 페이지 데이터 가져오기
     @GetMapping("/recommend")
-    public String getRecommendations(Model model) {
+    public String getRecommendations(
+            @RequestParam("duration") String duration,
+            @RequestParam("mbti") String mbti,
+            Model model) {
+
+        // 서비스로부터 데이터 가져오기
         List<RestaurantEntity> restaurants = restaurantService.getAllRestaurants();
         List<PlayEntity> plays = playService.getAllPlays();
         List<HotelEntity> hotels = hotelService.getAllHotels();
 
+        // Model에 데이터 추가
         model.addAttribute("restaurants", restaurants);
         model.addAttribute("plays", plays);
         model.addAttribute("hotels", hotels);
+
+        // URL 파라미터로 받은 duration과 mbti 값을 Model에 추가
+        model.addAttribute("duration", duration);
+        model.addAttribute("mbti", mbti);
+
+        // MBTI에 따른 해시태그 추가
+        String hashtags = mbtiHashtags.get(mbti);
+        model.addAttribute("hashtags", hashtags != null ? hashtags : "해시태그를 찾을 수 없습니다.");
 
         return "recommend";  // recommend.html로 이동
     }
