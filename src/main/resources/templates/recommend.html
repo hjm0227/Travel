@@ -250,10 +250,8 @@
             display: block; /* 블록 요소로 설정 */
             text-align: left; /* 왼쪽 정렬 */
         }
-
     </style>
 </head>
-
 <body>
 <!-- 홈 버튼을 상단에 배치 -->
 <a href="travel/home" class="home-button">
@@ -385,22 +383,6 @@
         // URL에서 기간 정보 가져오기
         const urlParams = new URLSearchParams(window.location.search);
         const duration = urlParams.get('duration');
-
-        //모든 일차 숨기기
-        document.querySelectorAll('.day').forEach(day => {
-            day.style.display = 'none';
-        });
-
-        if (duration === '1day') {
-            document.getElementById('day1').style.display = 'block';
-        } else if (duration === '2day') {
-            document.getElementById('day1').style.display = 'block';
-            document.getElementById('day2').style.display = 'block';
-        } else if (duration === '3day') {
-            document.getElementById('day1').style.display = 'block';
-            document.getElementById('day2').style.display = 'block';
-            document.getElementById('day3').style.display = 'block';
-        }
 
         // Sortable.js 설정
         const daySortables = ['#day1', '#day2', '#day3'];
@@ -573,6 +555,119 @@
                 tooltip.style.display = 'block';
             }
         }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 해시태그와 놀거리 매칭 후 랜덤으로 각 일차에 2개씩 자동 드래그 처리
+            const hashtag = document.querySelector('.hashtag').innerText.split('#').filter(tag => tag); // 해시태그를 배열로 추출
+            const playItems = Array.from(document.querySelectorAll('#play-list .item')); // 모든 놀거리 항목
+            const restaurantItems = Array.from(document.querySelectorAll('#restaurant-list .item')); // 모든 식당 항목
+            const hotelItems = Array.from(document.querySelectorAll('#hotel-list .item')); // 모든 숙소 항목
+
+            // 해시태그와 일치하는 놀거리 필터링
+            const matchingPlays = playItems.filter(item => {
+                const types = Array.from(item.querySelectorAll('p span')).map(span => span.innerText.replace('#', '')); // 놀거리의 타입 해시태그
+                return types.some(type => hashtag.includes(type)); // 해시태그와 타입이 일치하는지 확인
+            });
+
+            // URL에서 기간 정보 가져오기
+            const urlParams = new URLSearchParams(window.location.search);
+            const duration = urlParams.get('duration');
+
+            // 일차별 항목을 추가하는 함수
+            function addItemsToDay(day) {
+                const dayList = document.querySelector(`#day${day} .sortable-list`);
+                const randomItems = [];
+
+                // 식당, 놀거리, 숙소 순서에 맞게 랜덤 선택
+                if (restaurantItems.length > 0) {
+                    const randomRestaurant = restaurantItems.splice(Math.floor(Math.random() * restaurantItems.length), 1)[0];
+                    randomRestaurant.setAttribute('data-original-list', 'restaurant-list'); // 원래 리스트 ID 설정
+                    randomItems.push(randomRestaurant); // 첫 번째 식당 추가
+                }
+                if (matchingPlays.length > 0) {
+                    const randomPlay1 = matchingPlays.splice(Math.floor(Math.random() * matchingPlays.length), 1)[0];
+                    randomPlay1.setAttribute('data-original-list', 'play-list'); // 원래 리스트 ID 설정
+                    randomItems.push(randomPlay1); // 첫 번째 놀거리 추가
+                }
+                if (matchingPlays.length > 0) {
+                    const randomPlay2 = matchingPlays.splice(Math.floor(Math.random() * matchingPlays.length), 1)[0];
+                    randomPlay2.setAttribute('data-original-list', 'play-list'); // 원래 리스트 ID 설정
+                    randomItems.push(randomPlay2); // 두 번째 놀거리 추가
+                }
+                if (restaurantItems.length > 0) {
+                    const randomRestaurant2 = restaurantItems.splice(Math.floor(Math.random() * restaurantItems.length), 1)[0];
+                    randomRestaurant2.setAttribute('data-original-list', 'restaurant-list'); // 원래 리스트 ID 설정
+                    randomItems.push(randomRestaurant2); // 두 번째 식당 추가
+                }
+                if (hotelItems.length > 0) {
+                    const randomHotel = hotelItems.splice(Math.floor(Math.random() * hotelItems.length), 1)[0];
+                    randomHotel.setAttribute('data-original-list', 'hotel-list'); // 원래 리스트 ID 설정
+                    randomItems.push(randomHotel); // 숙소 추가
+                }
+
+                // 선택된 항목을 해당 일차에 추가하고 원래 리스트에서 제거
+                randomItems.forEach(item => {
+                    // 원래 리스트에서 삭제
+                    item.remove();
+
+                    // 드래그된 항목에 있는 취소 버튼 보이게 설정
+                    const cancelButton = item.querySelector('.cancel-button');
+                    if (cancelButton) {
+                        cancelButton.style.display = 'block'; // 취소 버튼 보이게 설정
+                    }
+
+                    // 드래그된 항목을 해당 일차에 추가
+                    dayList.appendChild(item);
+
+                    // 취소 버튼 클릭 시 원래 리스트로 복구
+                    cancelButton.addEventListener('click', function () {
+                        cancelMove(cancelButton); // 취소 시 원래 리스트로 복구하는 함수 호출
+                    });
+                });
+
+                // 총합 업데이트
+                updateTotalPrice(`day${day}`);
+            }
+
+            // 취소 버튼 클릭 시 원래 리스트로 이동하는 함수
+            function cancelMove(button) {
+                const item = button.parentElement; // 항목 가져오기
+                const originalListId = item.getAttribute('data-original-list'); // 원래 리스트 ID 가져오기
+                const originalList = document.getElementById(originalListId); // 원래 리스트 요소 찾기
+
+                originalList.appendChild(item); // 항목을 원래 리스트로 이동
+                item.querySelector('.cancel-button').style.display = 'none'; // 취소 버튼 숨기기
+
+                // 총합 업데이트
+                updateTotalPrice(originalListId);
+            }
+
+            // 모든 일차 숨기기
+            document.querySelectorAll('.day').forEach(day => {
+                day.style.display = 'none';
+            });
+
+            // 선택된 기간에 따라 일차별로 항목 추가 및 화면 표시
+            if (duration === '1day') {
+                document.getElementById('day1').style.display = 'block';
+                addItemsToDay(1); // 1일차에 추가
+            } else if (duration === '2day') {
+                document.getElementById('day1').style.display = 'block';
+                document.getElementById('day2').style.display = 'block';
+                addItemsToDay(1); // 1일차에 추가
+                addItemsToDay(2); // 2일차에 추가
+            } else if (duration === '3day') {
+                document.getElementById('day1').style.display = 'block';
+                document.getElementById('day2').style.display = 'block';
+                document.getElementById('day3').style.display = 'block';
+                addItemsToDay(1); // 1일차에 추가
+                addItemsToDay(2); // 2일차에 추가
+                addItemsToDay(3); // 3일차에 추가
+            }
+        });
+
+
     </script>
 </body>
 </html>
