@@ -185,7 +185,7 @@
             <!-- 로그인 상태 확인 -->
             <a th:if="${session.isLoggedIn}" href="/travel/logout" aria-label="로그아웃">로그아웃</a>
             <a th:if="${session.isLoggedIn}" href="/travel/mypage" aria-label="커뮤니티">마이페이지</a>
-            <a th:if="${session.isLoggedIn}" href="/community" aria-label="커뮤니티">커뮤니티</a>
+            <a th:if="${session.isLoggedIn}" href="/travel/list" aria-label="커뮤니티">커뮤니티</a>
         </div>
 
         <div>
@@ -253,16 +253,24 @@
     // 서버에서 로그인 상태 전달 (Thymeleaf를 사용하여 세션 값을 HTML에서 자바스크립트로 전달)
     const isLoggedIn = /*[[${session.isLoggedIn != null}]]*/ [[${session.isLoggedIn != null}]];
 
+
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const loginSuccess = urlParams.get('loginSuccess');
         const currentUrl = window.location.href;
+
+
 
         // 현재 페이지가 로그인 페이지가 아닐 때만 알림을 표시합니다.
         if (!currentUrl.includes('/travel/login')) {
             if (loginSuccess) {
                 alert('로그인 성공!');
             }
+        }
+
+        const memberId = sessionStorage.getItem('memberId'); // 로그인한 사용자 ID 가져오기
+        if (memberId) {
+            loginUser(memberId); // 사용자 ID 저장
         }
     };
 
@@ -288,6 +296,7 @@
             window.location.href = `/recommend?duration=${duration}&mbti=${mbti}`;
         }
     });
+
 
 </script>
 </body>

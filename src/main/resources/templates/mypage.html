@@ -1,38 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>마이페이지</title>
-</head>
-<body>
-<div id="schedule-display"></div>
+<div id="my-page-content">
+    <p>현재 사용자 ID: ${memberId}</p> <!-- 여기서 memberId를 출력 -->
+    <h2>내 저장 목록</h2>
+    <h3>놀거리</h3>
+    <ul id="play-list"></ul>
+    <h3>식당</h3>
+    <ul id="restaurant-list"></ul>
+    <h3>숙소</h3>
+    <ul id="hotel-list"></ul>
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedSchedule = JSON.parse(localStorage.getItem('savedSchedule'));
-        const scheduleDisplay = document.getElementById('schedule-display');
+    const memberId = sessionStorage.getItem('memberId'); // 사용자 ID 가져오기
 
-        if (savedSchedule) {
-            savedSchedule.forEach(day => {
-                const dayDiv = document.createElement('div');
-                dayDiv.innerHTML = `<h3>Day ${day.day}</h3>`;
+    fetch(`/api/savedItems/${memberId}`) // 수정된 API 엔드포인트
+        .then(response => response.json())
+        .then(data => {
+            const playList = document.getElementById('play-list');
+            const restaurantList = document.getElementById('restaurant-list');
+            const hotelList = document.getElementById('hotel-list');
 
-                const itemList = document.createElement('ul');
-                day.items.forEach(item => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = item;
-                    itemList.appendChild(listItem);
-                });
-
-                dayDiv.appendChild(itemList);
-                scheduleDisplay.appendChild(dayDiv);
+            // Play 항목 추가
+            data.plays.forEach(play => {
+                const li = document.createElement('li');
+                li.textContent = play.name; // 이름으로 변경
+                playList.appendChild(li);
             });
-        } else {
-            scheduleDisplay.innerHTML = '<p>저장된 일정이 없습니다.</p>';
-        }
-    });
+
+            // Restaurant 항목 추가
+            data.restaurants.forEach(restaurant => {
+                const li = document.createElement('li');
+                li.textContent = restaurant.name; // 이름으로 변경
+                restaurantList.appendChild(li);
+            });
+
+            // Hotel 항목 추가
+            data.hotels.forEach(hotel => {
+                const li = document.createElement('li');
+                li.textContent = hotel.name; // 이름으로 변경
+                hotelList.appendChild(li);
+            });
+        })
+        .catch(error => console.error('Error:', error));
 </script>
-
-
-</body>
-</html>

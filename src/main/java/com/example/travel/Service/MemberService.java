@@ -38,4 +38,10 @@ public class MemberService {
         }
         return null;  // 로그인 실패 시 null 반환
     }
+
+    // 이메일로 회원 정보를 찾는 메서드 추가
+    public MemberEntity findByEmail(String email) {
+        Optional<MemberEntity> memberEntity = memberRepository.findByMemberEmail(email);
+        return memberEntity.orElse(null);  // 회원이 존재하지 않으면 null 반환
+    }
 }

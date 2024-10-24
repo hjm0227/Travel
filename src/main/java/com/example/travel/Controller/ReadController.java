@@ -4,8 +4,11 @@ import com.example.travel.Service.RestaurantService;
 import com.example.travel.Service.PlayService;
 import com.example.travel.Service.HotelService;
 import com.example.travel.entity.HotelEntity;
+import com.example.travel.entity.MemberEntity;
 import com.example.travel.entity.PlayEntity;
 import com.example.travel.entity.RestaurantEntity;
+import com.example.travel.repository.MemberRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +24,14 @@ public class ReadController {
     private final RestaurantService restaurantService;
     private final PlayService playService;
     private final HotelService hotelService;
+    private final MemberRepository memberRepository;
 
     // 생성자 주입
-    public ReadController(RestaurantService restaurantService, PlayService playService, HotelService hotelService) {
+    public ReadController(RestaurantService restaurantService, PlayService playService, HotelService hotelService, MemberRepository memberRepository) {
         this.restaurantService = restaurantService;
         this.playService = playService;
         this.hotelService = hotelService;
+        this.memberRepository = memberRepository;
     }
 
     // MBTI에 따른 해시태그 매핑
@@ -54,7 +59,21 @@ public class ReadController {
     public String getRecommendations(
             @RequestParam("duration") String duration,
             @RequestParam("mbti") String mbti,
-            Model model) {
+            Model model,
+            HttpSession session) {
+
+        // 세션에서 사용자 ID 가져오기
+        Long memberId = (Long) session.getAttribute("memberId");
+        if (memberId == null) {
+            return "redirect:/travel/login?loginRequired=true";  // 로그인 안된 상태면 로그인 페이지로 리다이렉트
+        }
+
+        // MemberId를 통해 MemberEntity 호출
+        MemberEntity memberEntity = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        // 사용자 정보를 Model에 추가
+        model.addAttribute("memberEntity", memberEntity);
 
         // 서비스로부터 데이터 가져오기
         List<RestaurantEntity> restaurants = restaurantService.getAllRestaurants();
@@ -76,4 +95,5 @@ public class ReadController {
 
         return "recommend";  // recommend.html로 이동
     }
+
 }

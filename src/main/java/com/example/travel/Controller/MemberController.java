@@ -6,9 +6,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -42,12 +41,18 @@ public class MemberController {
         MemberDTO loginResult = memberService.login(memberDTO);
         if (loginResult != null) {
             session.setAttribute("loginEmail", loginResult.getMemberEmail());
+            session.setAttribute("memberId", loginResult.getId()); // 사용자 ID 저장
+            session.setAttribute("memberName", loginResult.getMemberName()); // 사용자 이름 저장
             session.setAttribute("isLoggedIn", true);
-            return "redirect:/travel/home?loginSuccess=true";  // 로그인 성공 시 홈 페이지로 이동
+            System.out.println("로그인 성공, 사용자 ID: " + loginResult.getId() + ", 이름: " + loginResult.getMemberName()); // 로그 추가
+            return "redirect:/travel/home?loginSuccess=true";
         } else {
-            return "redirect:/travel/login?loginFailed=true";  // 로그인 실패 시 다시 로그인 페이지로
+            return "redirect:/travel/login?loginFailed=true";
         }
     }
+
+
+
     @GetMapping("/travel/home")
     public String home() {
         return "home";
@@ -60,7 +65,9 @@ public class MemberController {
     }
 
     @GetMapping("/travel/mypage")
-    public String mypageForm() {
+    public String mypageForm(HttpSession session, Model model) {
+        Long memberId = (Long) session.getAttribute("memberId"); // 세션에서 사용자 ID 가져오기
+        model.addAttribute("memberId", memberId); // 모델에 사용자 ID 추가
         return "mypage";  // mypage.html로 이동
     }
 }
