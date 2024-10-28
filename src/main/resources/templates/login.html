@@ -88,6 +88,20 @@
     <a href="home" class="home-button">
         <img src="/images/home.png" alt="홈으로 돌아가기" />
     </a>
+
+<body>
+<div class="login-container">
+    <h1>로그인</h1>
+    <form action="/travel/login" method="post">
+        <input type="text" name="memberEmail" placeholder="아이디" required> <br>
+        <input type="password" name="memberPassword" placeholder="비밀번호" required><br>
+        <input type="submit" value="로그인">
+    </form>
+    <div class="message">
+        <p>계정이 없으신가요? <a href="/travel/save">회원가입</a></p>
+    </div>
+</div>
+
     <script>
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -140,17 +154,5 @@
 
     </script>
 </head>
-<body>
-<div class="login-container">
-    <h1>로그인</h1>
-    <form action="/travel/login" method="post">
-        <input type="text" name="memberEmail" placeholder="아이디" required> <br>
-        <input type="password" name="memberPassword" placeholder="비밀번호" required><br>
-        <input type="submit" value="로그인">
-    </form>
-    <div class="message">
-        <p>계정이 없으신가요? <a href="/travel/save">회원가입</a></p>
-    </div>
-</div>
 </body>
 </html>

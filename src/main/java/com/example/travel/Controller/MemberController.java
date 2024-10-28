@@ -53,6 +53,7 @@ public class MemberController {
 
 
 
+
     @GetMapping("/travel/home")
     public String home() {
         return "home";
@@ -61,7 +62,7 @@ public class MemberController {
     @GetMapping("/travel/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "home";  // 로그아웃 시 홈 페이지로
+        return "redirect:/travel/home?logoutSuccess=true";  // 로그아웃 시 홈 페이지로
     }
 
     @GetMapping("/travel/mypage")

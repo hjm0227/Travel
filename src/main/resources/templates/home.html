@@ -185,7 +185,6 @@
             <!-- 로그인 상태 확인 -->
             <a th:if="${session.isLoggedIn}" href="/travel/logout" aria-label="로그아웃">로그아웃</a>
             <a th:if="${session.isLoggedIn}" href="/travel/mypage" aria-label="커뮤니티">마이페이지</a>
-            <a th:if="${session.isLoggedIn}" href="/travel/list" aria-label="커뮤니티">커뮤니티</a>
         </div>
 
         <div>
@@ -256,16 +255,18 @@
 
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
-        const loginSuccess = urlParams.get('loginSuccess');
+        const loginSuccess = urlParams.get('loginSuccess') === 'true'; // 문자열을 'true'로 비교
+        const logoutSuccess = urlParams.get('logoutSuccess') === 'true'; // 문자열을 'true'로 비교
         const currentUrl = window.location.href;
 
+        // 로그인 성공 알림
+        if (loginSuccess && !currentUrl.includes('/travel/login')) {
+            alert('로그인 성공!');
+        }
 
-
-        // 현재 페이지가 로그인 페이지가 아닐 때만 알림을 표시합니다.
-        if (!currentUrl.includes('/travel/login')) {
-            if (loginSuccess) {
-                alert('로그인 성공!');
-            }
+        // 로그아웃 성공 알림
+        if (logoutSuccess && !currentUrl.includes('/travel/logout')) {
+            alert('로그아웃 성공!');
         }
 
         const memberId = sessionStorage.getItem('memberId'); // 로그인한 사용자 ID 가져오기
@@ -273,6 +274,7 @@
             loginUser(memberId); // 사용자 ID 저장
         }
     };
+
 
     document.getElementById('duration-form').addEventListener('submit', function(event) {
         if (!isLoggedIn) {
