@@ -257,7 +257,12 @@
 <a href="travel/home" class="home-button">
     <img src="/images/home.png" alt="홈으로 돌아가기" />
 </a>
-<button id="save-button">저장</button>
+<form id="itineraryForm" action="/save-itinerary" method="POST">
+    <input type="hidden" name="day1Items" id="day1ItemsInput">
+    <input type="hidden" name="day2Items" id="day2ItemsInput">
+    <input type="hidden" name="day3Items" id="day3ItemsInput">
+    <button type="submit" id="save-button">저장</button>
+</form>
 
 <div class="mbti-container">
     <span class="mbti" th:text="${mbti}"></span>
@@ -411,7 +416,6 @@
             onAdd: function (evt) {
                 const dayId = day.replace('#', '');
                 const itemId = evt.item.getAttribute('data-id');
-
                 // 해당 일차 배열에 추가
                 if (dayId === 'day1') {
                     day1Items.push(itemId);
@@ -445,6 +449,14 @@
         });
     });
 
+    document.getElementById("save-button").addEventListener("click", function () {
+        document.getElementById("day1ItemsInput").value = JSON.stringify(day1Items);
+        document.getElementById("day2ItemsInput").value = JSON.stringify(day2Items);
+        document.getElementById("day3ItemsInput").value = JSON.stringify(day3Items);
+
+        document.getElementById("itineraryForm").submit();  // 폼 제출
+    });
+
     const lists = ['play-list', 'restaurant-list', 'hotel-list'];
     lists.forEach(listId => {
         new Sortable(document.getElementById(listId), {
@@ -475,7 +487,6 @@
         // 원래 일차의 총합 가격 업데이트
         const originalDayId = originalListId.replace('-list', '');
         updateTotalPrice(originalDayId);
-
     }
 
     // 각 일차의 총합 가격 업데이트 함수

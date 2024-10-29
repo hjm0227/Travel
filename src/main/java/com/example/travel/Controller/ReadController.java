@@ -9,6 +9,7 @@ import com.example.travel.entity.PlayEntity;
 import com.example.travel.entity.RestaurantEntity;
 import com.example.travel.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 public class ReadController {
 
@@ -64,6 +66,8 @@ public class ReadController {
 
         // 세션에서 사용자 ID 가져오기
         Long memberId = (Long) session.getAttribute("memberId");
+        //콘솔창에 log기능으로 memberId값 확인
+        log.info("memberId: " + memberId);
         if (memberId == null) {
             return "redirect:/travel/login?loginRequired=true";  // 로그인 안된 상태면 로그인 페이지로 리다이렉트
         }
@@ -71,6 +75,8 @@ public class ReadController {
         // MemberId를 통해 MemberEntity 호출
         MemberEntity memberEntity = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+        //콘솔창에 log기능으,로 memberEntity 아이디 값 출력
+        log.info("memberEntity: " + memberEntity.getId());
 
         // 사용자 정보를 Model에 추가
         model.addAttribute("memberEntity", memberEntity);
