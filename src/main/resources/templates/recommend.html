@@ -670,6 +670,29 @@
 
         updateOverallTotal(); // 전체 총합 초기화
     });
+
+    function toggleTooltip(button) {
+        // 모든 툴팁 요소를 선택
+        const allTooltips = document.querySelectorAll('.tooltip');
+
+        // 현재 클릭한 버튼의 툴팁을 가져옴
+        const tooltip = button.querySelector('.tooltip');
+
+        // 모든 툴팁을 숨김
+        allTooltips.forEach(tip => {
+            if (tip !== tooltip) { // 현재 클릭한 툴팁은 제외
+                tip.style.display = 'none';
+            }
+        });
+
+        // 클릭한 버튼의 툴팁을 토글함
+        if (tooltip.style.display === 'none' || tooltip.style.display === '') {
+            tooltip.style.display = 'block';
+        } else {
+            tooltip.style.display = 'none';
+        }
+    }
+
 </script>
 
 </body>
