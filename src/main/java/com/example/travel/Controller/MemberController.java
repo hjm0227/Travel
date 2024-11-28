@@ -7,12 +7,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final JdbcTemplate jdbcTemplate; // 데이터베이스 연결
+    // 장소 데이터를 반환하는 API
+
+
+    @GetMapping("/travel/locations")
+    @ResponseBody
+    public List<Map<String, Object>> getLocations() {
+        String query = "SELECT name, latitude, longitude FROM play_table";
+        return jdbcTemplate.queryForList(query);
+    }
 
     // 회원가입 페이지 출력 요청
     @GetMapping("travel/save")
@@ -70,5 +84,9 @@ public class MemberController {
         Long memberId = (Long) session.getAttribute("memberId"); // 세션에서 사용자 ID 가져오기
         model.addAttribute("memberId", memberId); // 모델에 사용자 ID 추가
         return "mypage";  // mypage.html로 이동
+    }
+    @GetMapping("/travel/kakaomap")
+    public String kakaomap(HttpSession session, Model model) {
+        return "kakaomap";  // mypage.html로 이동
     }
 }

@@ -184,7 +184,8 @@
 
             <!-- 로그인 상태 확인 -->
             <a th:if="${session.isLoggedIn}" href="/travel/logout" aria-label="로그아웃">로그아웃</a>
-<!--            <a th:if="${session.isLoggedIn}" href="/travel/mypage" aria-label="커뮤니티">마이페이지</a>-->
+           <a th:if="${session.isLoggedIn}" href="/travel/mypage" aria-label="커뮤니티">마이페이지</a>
+            <a th:if="${session.isLoggedIn}" href="/travel/kakaomap" aria-label="카카오맵">카카오맵</a>
         </div>
 
         <div>
@@ -261,12 +262,12 @@
 
         // 로그인 성공 알림
         if (loginSuccess && !currentUrl.includes('/travel/login')) {
-            alert('로그인 성공!');
+            alert('환영합니다!');
         }
 
         // 로그아웃 성공 알림
         if (logoutSuccess && !currentUrl.includes('/travel/logout')) {
-            alert('로그아웃 성공!');
+            alert('로그아웃 되었습니다');
         }
 
         const memberId = sessionStorage.getItem('memberId'); // 로그인한 사용자 ID 가져오기
